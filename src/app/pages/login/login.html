@@ -4,7 +4,7 @@
 
         <div class="px-8 pt-8 pb-6 text-center">
             <div
-                class="mx-auto h-12 w-12 bg-indigo-600 rounded-lg flex items-center justify-center mb-4 shadow-indigo-200 shadow-md">
+                class="mx-auto h-12 w-12 bg-indigo-600 rounded-lg flex items-center justify-center mb-4 shadow-indigo-200 shadow-xl">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -12,7 +12,8 @@
                 </svg>
             </div>
             <h2 class="text-2xl font-bold text-slate-800">Session Recording Portal</h2>
-            <p class="text-slate-500 mt-2 text-sm">Please sign in to continue</p>
+            <p class="mt-3"></p>
+            <!-- <p class="text-slate-500 mt-2 text-sm">Please sign in to continue</p> -->
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="px-8 pb-8 space-y-6">
@@ -28,9 +29,8 @@
                         </svg>
                     </div>
                     <input id="email" type="email" formControlName="email"
-                        class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-slate-900 placeholder-slate-400"
-                        placeholder="admin@company.com"
-                        [class.border-red-500]="f['email'].invalid && f['email'].touched">
+                        class="w-full pl-10 pr-4 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-slate-900 placeholder-slate-400"
+                        placeholder="admin@company.com" [ngClass]="{'border-red-500': f['email'].invalid && f['email'].touched, 'border-slate-300': !(f['email'].invalid && f['email'].touched)}">
                 </div>
                 <div *ngIf="f['email'].invalid && (f['email'].touched || f['email'].dirty)"
                     class="text-red-500 text-xs mt-1 ml-1">
@@ -44,6 +44,7 @@
             </div>
 
             <div class="relative">
+                <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Password</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -53,8 +54,8 @@
                         </svg>
                     </div>
                     <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
-                        class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-slate-900 placeholder-slate-400"
-                        placeholder="••••••••" [class.border-red-500]="f['password'].invalid && f['password'].touched">
+                        class="w-full pl-10 pr-4 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-slate-900 placeholder-slate-400"
+                        placeholder="••••••••" [ngClass]="{'border-red-500': f['password'].invalid && f['password'].touched, 'border-slate-300': !(f['password'].invalid && f['password'].touched)}">
                     <!-- Eye Toggle Icon (Right) -->
                     <button type="button"
                         class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer z-50 peer"
@@ -87,13 +88,18 @@
                     </span>
                 </div>
                 <div *ngIf="f['password'].invalid && f['password'].touched" class="text-red-500 text-xs mt-1 ml-1">
-                    Password is required (min 6 chars).
+                    <span *ngIf="f['password']?.errors?.['required']">
+                        Password is required.
+                    </span>
+                    <span *ngIf="f['password']?.errors?.['minlength']">
+                        Password must be at least 5 characters long.
+                    </span>
                 </div>
             </div>
 
             <button type="submit" [disabled]="loginForm.invalid || isLoading()"
-                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition-colors duration-200 shadow-md shadow-indigo-500/20 flex items-center justify-center group disabled:opacity-70 disabled:cursor-not-allowed">
-                <span *ngIf="!isLoading()">Sign In</span>
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition-colors duration-200 shadow-xl shadow-indigo-800/20 flex items-center justify-center group disabled:opacity-70 disabled:cursor-not-allowed hover:cursor-pointer">
+                <span *ngIf="!isLoading()">Login</span>
                 <svg *ngIf="isLoading()" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
                     fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

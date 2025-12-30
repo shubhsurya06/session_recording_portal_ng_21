@@ -1,12 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { APP_CONSTANT } from '../../core/constant/appConstant';
 import { Router, RouterLinkActive, RouterLink, RouterOutlet } from '@angular/router';
 import { UserService } from '../../services/user/user-service';
 import { IUser } from '../../core/model/user/user-model';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, RouterOutlet, NgClass],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
 })
@@ -20,6 +21,9 @@ export class Layout {
 
   // user data from user service
   userData: IUser | null = null;
+
+  // sidebar collapsed state
+  isSidebarCollapsed = signal(false);
 
   constructor() {
     // Try to get user data from the service
@@ -35,6 +39,11 @@ export class Layout {
     }
 
     console.log('Logged in user data from layout:', this.userData);
+  }
+
+  // toggle sidebar collapsed state
+  toggleSidebar() {
+    this.isSidebarCollapsed.set(!this.isSidebarCollapsed());
   }
 
   /**

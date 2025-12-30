@@ -1,57 +1,101 @@
-<nav class="bg-white border-b border-slate-200 fixed w-full z-10 top-0 start-0">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+<!-- NAVBAR -->
+<nav class="bg-white border-b border-slate-200 fixed w-full z-20 top-0 shadow-md">
+    <div class="px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
 
-            <div class="flex">
-                <div class="flex-shrink-0 flex items-center">
-                    <div class="h-8 w-8 bg-indigo-600 rounded flex items-center justify-center shadow-sm">
-                        <span class="text-white font-bold text-lg">A</span>
-                    </div>
-                    <span class="ml-2 font-bold text-slate-800 text-lg">Recording Portal</span>
-                </div>
-
-                <div class="hidden sm:ml-8 sm:flex sm:space-x-4 items-center">
-
-                    <a routerLink="/dashboard" routerLinkActive="bg-indigo-50 text-indigo-700"
-                        class="hover:bg-slate-50 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150">
-                        Dashboard
-                    </a>
-
-                    <a routerLink="/batch" routerLinkActive="bg-indigo-50 text-indigo-700"
-                        class="hover:bg-slate-50 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150">
-                        Batch
-                    </a>
-                </div>
-            </div>
-
-            <div class="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                    stroke="currentColor" class="w-5 h-5 text-slate-700">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 3a9 9 0 100 18 9 9 0 000-18 M12 7a3 3 0 100 6 3 3 0 000-6 M7 17a5 5 0 0110 0" />
+        <!-- LEFT -->
+        <div class="flex items-center gap-4">
+            <!-- Sidebar Toggle -->
+            <button (click)="toggleSidebar()"
+                class="p-1 rounded hover:bg-indigo-700 transition hover:cursor-pointer hover:text-white peer">
+                <!-- Hamburger Icon -->
+                <svg class="w-4 h-4 hover:text-white font-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-                <span class="text-sm font-medium text-slate-700 mr-4">
-                    {{userData?.fullName}}
+            </button>
+            <span
+                class="absolute -bottom-4 left-0 translate-x-1/2 whitespace-nowrap rounded bg-slate-900 px-2 py-1
+             text-xs text-white opacity-0 peer-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
+                {{ isSidebarCollapsed() ? 'Show Sidebar' : 'Hide Sidebar' }}
+            </span>
+
+            <!-- Logo -->
+            <div class="flex items-center">
+                <div class="h-8 w-8 bg-indigo-600 rounded flex items-center justify-center">
+                    <span class="text-white font-bold">S</span>
+                </div>
+                <span class="ml-2 font-bold text-slate-800 text-lg">
+                    Recording Portal
                 </span>
-
-                <div class="h-5 w-px bg-slate-200 mr-4"></div>
-
-                <button (click)="logout()" class="group cursor-pointer flex items-center gap-2 border-2 border-transparent text-slate-500
-               hover:border-red-600 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors transition-border duration-300">
-                    <span>Logout</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                        stroke="currentColor"
-                        class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15 3h3a2 2 0 012 2v14a2 2 0 01-2 2h-3 M10 17l5-5-5-5 M15 12H3" />
-                    </svg>
-                </button>
             </div>
-
         </div>
+
+        <!-- RIGHT -->
+        <div class="flex items-center"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="2" stroke="currentColor" class="w-5 h-5 text-slate-700">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 3a9 9 0 100 18 9 9 0 000-18 M12 7a3 3 0 100 6 3 3 0 000-6 M7 17a5 5 0 0110 0" />
+            </svg> <span class="text-sm font-medium text-slate-700 mr-4"> {{userData?.fullName}} </span>
+            <div class="h-5 w-px bg-slate-200 mr-4"></div>
+            <button (click)="logout()"
+                class="group cursor-pointer flex items-center gap-2 border-2 border-transparent text-slate-500 hover:border-red-600 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors transition-border duration-300">
+                <span>Logout</span> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="2" stroke="currentColor"
+                    class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15 3h3a2 2 0 012 2v14a2 2 0 01-2 2h-3 M10 17l5-5-5-5 M15 12H3" />
+                </svg>
+            </button>
+        </div>
+
     </div>
 </nav>
 
-<div class="h-16"></div>
+<!-- PAGE WRAPPER -->
+<div class="flex pt-16 min-h-screen bg-slate-50">
 
-<router-outlet></router-outlet>
+    <!-- SIDEBAR -->
+    <aside class="bg-white border-r border-slate-200 fixed left-0 top-16 h-[calc(100vh-4rem)]
+           transition-all duration-300 ease-in-out" [ngClass]="isSidebarCollapsed() ? 'w-16' : 'w-56'">
+        <nav class="flex flex-col p-2 gap-1">
+
+            <!-- DASHBOARD -->
+            <a routerLink="/dashboard" routerLinkActive="bg-indigo-600 text-white"
+                class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-indigo-400 hover:text-white font-semibold transition mt-5 mb-2 text-bold">
+                <!-- Icon -->
+                <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
+                </svg>
+
+                <!-- Text -->
+                <span class="whitespace-nowrap transition-all duration-200"
+                    [ngClass]="isSidebarCollapsed() ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'">
+                    Dashboard
+                </span>
+            </a>
+
+            <!-- BATCH -->
+            <a routerLink="/batch" routerLinkActive="bg-indigo-600 text-white" class="flex items-center gap-3 px-3 py-2 mb-2 rounded-md text-slate-700
+               hover:bg-indigo-400 hover:text-white font-semibold transition">
+                <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+
+                <span class="whitespace-nowrap transition-all duration-200"
+                    [ngClass]="isSidebarCollapsed() ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'">
+                    Batch
+                </span>
+            </a>
+
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 transition-all duration-300" [ngClass]="isSidebarCollapsed() ? 'ml-16' : 'ml-56'">
+        <div class="p-6">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
+
+</div>

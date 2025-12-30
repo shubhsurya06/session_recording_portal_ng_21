@@ -1,4 +1,4 @@
-import { NgIf } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth/auth-service';
@@ -8,7 +8,7 @@ import { UserService } from '../../services/user/user-service';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [ReactiveFormsModule, NgIf, NgClass],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
