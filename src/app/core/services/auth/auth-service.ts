@@ -3,7 +3,6 @@ import { IUser } from '../../model/user/user-model';
 import { APP_CONSTANT } from '../../constant/appConstant';
 import { API_CONSTANT } from '../../constant/apiConstant';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
