@@ -28,6 +28,9 @@ export class Login implements OnInit {
   // loading signal to show loading spinner when user is logging in
   isLoading = signal<boolean>(false);
 
+  // show/hide password field
+  showPassword = signal<boolean>(false);
+
   constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
