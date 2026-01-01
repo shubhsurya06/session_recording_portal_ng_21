@@ -2,16 +2,22 @@ import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { BatchService } from '../../services/batch/batch-service';
 import { IBatch } from '../../core/model/batch/batch-model';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { NgClass } from '@angular/common';
+import { APP_CONSTANT } from '../../core/constant/appConstant';
 
 @Component({
   selector: 'app-batch-master',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgClass],
   templateUrl: './batch-master.html',
   styleUrl: './batch-master.css',
 })
 export class BatchMaster implements OnInit {
   // Form Group
   batchForm: FormGroup;
+
+  // View Modes (table or card)
+  tableViewMode = APP_CONSTANT.VIEW_MODE[0];
+  cardViewMode = APP_CONSTANT.VIEW_MODE[1];
 
   // inject BatchService
   batchServie = inject(BatchService);
@@ -32,13 +38,13 @@ export class BatchMaster implements OnInit {
   // );
 
   // --- Signals for State Management ---
-  viewMode = signal<'table' | 'card'>('table'); // Default to Table
+  viewMode = signal<string>(this.tableViewMode); // Default to Table
   isModalOpen = signal<boolean>(false);
   currentPage = signal<number>(1);
   isAddEditBatchLoader = signal<boolean>(false);
 
   // --- Computed Pagination Logic ---
-  itemsPerPage = computed(() => (this.viewMode() === 'card' ? 12 : 10));
+  itemsPerPage = signal<number>(APP_CONSTANT.PAGE_SIZE);
 
   // pagination logic
   paginatedBatches = computed(() => {
@@ -78,7 +84,7 @@ export class BatchMaster implements OnInit {
   }
 
   // --- Actions ---
-  toggleView(mode: 'table' | 'card') {
+  toggleView(mode: string) {
     this.viewMode.set(mode);
     this.currentPage.set(1); // Reset to page 1 on view switch
   }

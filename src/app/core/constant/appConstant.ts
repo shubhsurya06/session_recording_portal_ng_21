@@ -6,7 +6,8 @@ export const APP_CONSTANT = {
     USER_ROLES: {
         SYSTEM_ADMIN: 'Admin'
     },
+    VIEW_MODE: ['table', 'card'],
     SLASH_CONST: '/',
-    PAGE_SIZE: 9,
+    PAGE_SIZE: 10,
     TIMEOUT: 5000
 }
