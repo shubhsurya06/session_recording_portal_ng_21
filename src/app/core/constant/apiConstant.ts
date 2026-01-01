@@ -16,5 +16,12 @@ export const API_CONSTANT = {
     },
     BATCH_USER_APIS: {
         LOGIN: '/login',
+    },
+    BATCH_APIS: {
+        GET_BATCHES: '/Batches',
+        CREATE_BATCH: '/Batches',
+        GET_BATCH_BY_ID: '/Batches/',
+        UPDATE_BATCH: '/Batches/',
+        DELETE_BATCH: '/Batches/'
     }
 }
