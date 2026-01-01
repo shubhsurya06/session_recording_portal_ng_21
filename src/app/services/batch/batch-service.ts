@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { APP_CONSTANT } from '../../core/constant/appConstant';
 import { API_CONSTANT } from '../../core/constant/apiConstant';
 import { environment } from '../../../environments/environment.development';
-import { map } from 'rxjs/operators';
+import { map, delay } from 'rxjs/operators';
 
 
 @Injectable({
@@ -21,6 +21,7 @@ export class BatchService {
   getBatches() {
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCHES}`;
     return this.http.get<IBatch[]>(url).pipe(
+      delay(2000),
       map((res: any) => res.data as IBatch[])
     );
   }
@@ -29,6 +30,7 @@ export class BatchService {
   addBatch(batch: IBatch) {
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCHES}`;
     return this.http.post<IBatch>(url, batch).pipe(
+      delay(2000),
       map((res: any) => res.data as IBatch)
     );
   }
@@ -37,6 +39,7 @@ export class BatchService {
   updateBatch(batch: IBatch) {
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCHES}/${batch.batchId}`;
     return this.http.put<IBatch>(url, batch).pipe(
+      delay(2000),
       map((res: any) => res.data as IBatch)
     );
   }

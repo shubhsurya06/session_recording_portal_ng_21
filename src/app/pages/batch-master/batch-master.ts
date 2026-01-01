@@ -41,6 +41,7 @@ export class BatchMaster implements OnInit {
   viewMode = signal<string>(this.tableViewMode); // Default to Table
   isModalOpen = signal<boolean>(false);
   currentPage = signal<number>(1);
+  getBatchLoader = signal<boolean>(false);
   isAddEditBatchLoader = signal<boolean>(false);
 
   // --- Computed Pagination Logic ---
@@ -77,7 +78,9 @@ export class BatchMaster implements OnInit {
 
   // get batches list
   getBatches() {
+    this.getBatchLoader.set(true);
     this.batchServie.getBatches().subscribe((batches: IBatch[]) => {
+      this.getBatchLoader.set(false);
       this.batches.set(batches);
       console.log('Batches fetched:', this.batches());
     });
