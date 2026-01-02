@@ -5,6 +5,8 @@ import { APP_CONSTANT } from '../../core/constant/appConstant';
 import { API_CONSTANT } from '../../core/constant/apiConstant';
 import { environment } from '../../../environments/environment.development';
 import { map, delay } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { ICommonApiResponse } from '../../core/model/common/common.model';
 
 
 @Injectable({
@@ -18,29 +20,26 @@ export class BatchService {
   http = inject(HttpClient);
 
   // Method to get all batches
-  getBatches() {
+  getBatches() : Observable<ICommonApiResponse>{
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCHES}`;
-    return this.http.get<IBatch[]>(url).pipe(
-      delay(2000),
-      map((res: any) => res.data as IBatch[])
+    return this.http.get<ICommonApiResponse>(url).pipe(
+      delay(2000)
     );
   }
 
   // add new batch method 
-  addBatch(batch: IBatch) {
+  addBatch(batch: IBatch): Observable<ICommonApiResponse> {
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCHES}`;
-    return this.http.post<IBatch>(url, batch).pipe(
-      delay(2000),
-      map((res: any) => res.data as IBatch)
+    return this.http.post<ICommonApiResponse>(url, batch).pipe(
+      delay(2000)
     );
   }
 
   // update batch method
-  updateBatch(batch: IBatch) {
+  updateBatch(batch: IBatch): Observable<ICommonApiResponse> {
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCHES}/${batch.batchId}`;
-    return this.http.put<IBatch>(url, batch).pipe(
-      delay(2000),
-      map((res: any) => res.data as IBatch)
+    return this.http.put<ICommonApiResponse>(url, batch).pipe(
+      delay(2000)
     );
   }
 

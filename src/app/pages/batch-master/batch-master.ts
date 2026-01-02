@@ -1,9 +1,11 @@
-import { Component, inject, signal, OnInit, computed } from '@angular/core';
+import { Component, inject, signal, OnInit, computed, OnDestroy } from '@angular/core';
 import { BatchService } from '../../services/batch/batch-service';
 import { IBatch } from '../../core/model/batch/batch-model';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { APP_CONSTANT } from '../../core/constant/appConstant';
+import { ICommonApiResponse } from '../../core/model/common/common.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-batch-master',
@@ -11,7 +13,7 @@ import { APP_CONSTANT } from '../../core/constant/appConstant';
   templateUrl: './batch-master.html',
   styleUrl: './batch-master.css',
 })
-export class BatchMaster implements OnInit {
+export class BatchMaster implements OnInit, OnDestroy {
   // Form Group
   batchForm: FormGroup;
 
@@ -61,6 +63,8 @@ export class BatchMaster implements OnInit {
     return Array.from({ length: this.totalPages() }, (_, i) => i + 1);
   });
 
+  subscriptionList: Subscription = new Subscription();
+
   constructor(private fb: FormBuilder) {
     this.batchForm = this.fb.group({
       batchId: [0],
@@ -76,12 +80,16 @@ export class BatchMaster implements OnInit {
     this.getBatches();
   }
 
+  ngOnDestroy(): void {
+
+  }
+
   // get batches list
   getBatches() {
     this.getBatchLoader.set(true);
-    this.batchServie.getBatches().subscribe((batches: IBatch[]) => {
+    this.batchServie.getBatches().subscribe((batches: ICommonApiResponse) => {
       this.getBatchLoader.set(false);
-      this.batches.set(batches);
+      this.batches.set(batches.data);
       console.log('Batches fetched:', this.batches());
     });
   }
@@ -98,6 +106,26 @@ export class BatchMaster implements OnInit {
     }
   }
 
+  /**
+   * Perform below operations when batch Add/EDIT success
+   * @param batch 
+   */
+  onAddEditBatchSuccess(batch: ICommonApiResponse) {
+    let resBatch = batch.data;
+    this.isAddEditBatchLoader.set(false);
+    this.closeModal();
+
+    if (this.batchForm.value.batchId) {
+      this.batches.update(values => values.map(batch => batch.batchId === resBatch.batchId ? resBatch : batch));
+    } else {
+      this.batches.update(values => [resBatch, ...values]);
+    }
+  }
+
+  /**
+   * Use below method to SAVE/EDIT batch
+   * @returns 
+   */
   saveBatch() {
     if (this.batchForm.valid) {
       const newBatch: IBatch = {
@@ -111,21 +139,17 @@ export class BatchMaster implements OnInit {
 
       if (newBatch.batchId && newBatch.batchId > 0) {
         // Update existing batch
-        this.batchServie.updateBatch(newBatch).subscribe((updatedBatch: IBatch) => {
-          this.isAddEditBatchLoader.set(false);
-          this.closeModal();
-          this.batches.update(values => values.map(batch => batch.batchId === updatedBatch.batchId ? updatedBatch : batch));
+        this.batchServie.updateBatch(newBatch).subscribe((updatedBatch: ICommonApiResponse) => {
+          this.onAddEditBatchSuccess(updatedBatch);
         });
         return;
       }
 
       // Update signal immutably
-      this.batchServie.addBatch(newBatch).subscribe((createdBatch: IBatch) => {
-        this.isAddEditBatchLoader.set(false);
-        this.closeModal();
-        this.batches.update(values => [createdBatch, ...values]);
+      this.batchServie.addBatch(newBatch).subscribe((createdBatch: ICommonApiResponse) => {
+        this.onAddEditBatchSuccess(createdBatch);
       });
-    } else {  
+    } else {
       this.batchForm.markAllAsTouched();
     }
   }
