@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angula
 import { AuthService } from '../../core/services/auth/auth-service';
 import { APP_CONSTANT } from '../../core/constant/appConstant';
 import { Router } from '@angular/router';
-import { UserService } from '../../services/user/user-service';
+import { UserService } from '../../core/services/user/user-service';
 
 @Component({
   selector: 'app-login',

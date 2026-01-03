@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { APP_CONSTANT } from '../../core/constant/appConstant';
 import { Router, RouterLinkActive, RouterLink, RouterOutlet } from '@angular/router';
-import { UserService } from '../../services/user/user-service';
+import { UserService } from '../../core/services/user/user-service';
 import { IUser } from '../../core/model/user/user-model';
 import { NgClass } from '@angular/common';
 

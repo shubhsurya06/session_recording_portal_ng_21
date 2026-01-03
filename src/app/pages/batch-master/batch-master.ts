@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit, computed, OnDestroy } from '@angular/core';
-import { BatchService } from '../../services/batch/batch-service';
+import { BatchService } from '../../core/services/batch/batch-service';
 import { IBatch } from '../../core/model/batch/batch-model';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
@@ -26,18 +26,6 @@ export class BatchMaster implements OnInit, OnDestroy {
 
   // signal to hold batches list
   batches = signal<IBatch[]>([]);
-  // batches = signal<IBatch[]>(
-  //   Array.from({ length: 50 }, (_, i) => ({
-  //     batchId: i + 1,
-  //     batchName: `Full Stack Angular Batch ${i + 1}`,
-  //     description: 'Comprehensive guide to modern web development.',
-  //     startDate: new Date(2026, 0, 1).toISOString(),
-  //     endDate: new Date(2026, 3, 1).toISOString(),
-  //     isActive: i % 3 !== 0, // Randomly set some inactive
-  //     createdAt: new Date().toISOString(),
-  //     updatedAt: new Date().toISOString()
-  //   }))
-  // );
 
   // --- Signals for State Management ---
   viewMode = signal<string>(this.tableViewMode); // Default to Table
@@ -63,7 +51,7 @@ export class BatchMaster implements OnInit, OnDestroy {
     return Array.from({ length: this.totalPages() }, (_, i) => i + 1);
   });
 
-  subscriptionList: Subscription = new Subscription();
+  subscriptionList: Subscription[] = [];
 
   constructor(private fb: FormBuilder) {
     this.batchForm = this.fb.group({
@@ -81,17 +69,20 @@ export class BatchMaster implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-
+    this.subscriptionList.forEach(sub => {
+      sub.unsubscribe();
+    });
+    this.subscriptionList = [];
   }
 
   // get batches list
   getBatches() {
     this.getBatchLoader.set(true);
-    this.batchServie.getBatches().subscribe((batches: ICommonApiResponse) => {
+    let getApiSubscriber = this.batchServie.getBatches().subscribe((batches: ICommonApiResponse) => {
       this.getBatchLoader.set(false);
       this.batches.set(batches.data);
-      console.log('Batches fetched:', this.batches());
     });
+    this.subscriptionList.push(getApiSubscriber);
   }
 
   // --- Actions ---
@@ -113,13 +104,55 @@ export class BatchMaster implements OnInit, OnDestroy {
   onAddEditBatchSuccess(batch: ICommonApiResponse) {
     let resBatch = batch.data;
     this.isAddEditBatchLoader.set(false);
-    this.closeModal();
 
     if (this.batchForm.value.batchId) {
       this.batches.update(values => values.map(batch => batch.batchId === resBatch.batchId ? resBatch : batch));
     } else {
       this.batches.update(values => [resBatch, ...values]);
     }
+
+    this.closeModal();
+  }
+
+  /**
+   * Handle error after Add/Edit api got failed
+   * @param error 
+   */
+  onAddEditBatchError(error: ICommonApiResponse) {
+    this.isAddEditBatchLoader.set(false);
+    alert(error.message);
+  }
+
+  /**
+   * Call update API and handle its success/error
+   * @param newBatch 
+   */
+  editBatchApi(newBatch: IBatch) {
+    let editApiSubscriber = this.batchServie.updateBatch(newBatch).subscribe({
+      next: (updatedBatch: ICommonApiResponse) => {
+        this.onAddEditBatchSuccess(updatedBatch);
+      },
+      error: (error: any) => {
+        this.onAddEditBatchError(error.error);
+      }
+    });
+    this.subscriptionList.push(editApiSubscriber);
+  }
+
+  /**
+   * call save batch API and handle its success/error
+   * @param newBatch 
+   */
+  createNewBatchApi(newBatch: IBatch) {
+    let addApiSubscriber = this.batchServie.addBatch(newBatch).subscribe({
+      next: (createdBatch: ICommonApiResponse) => {
+        this.onAddEditBatchSuccess(createdBatch);
+      },
+      error: (error: any) => {
+        this.onAddEditBatchError(error.error);
+      }
+    });
+    this.subscriptionList.push(addApiSubscriber);
   }
 
   /**
@@ -137,18 +170,14 @@ export class BatchMaster implements OnInit, OnDestroy {
 
       this.isAddEditBatchLoader.set(true);
 
+      // Update existing batch
       if (newBatch.batchId && newBatch.batchId > 0) {
-        // Update existing batch
-        this.batchServie.updateBatch(newBatch).subscribe((updatedBatch: ICommonApiResponse) => {
-          this.onAddEditBatchSuccess(updatedBatch);
-        });
+        this.editBatchApi(newBatch);
         return;
       }
 
-      // Update signal immutably
-      this.batchServie.addBatch(newBatch).subscribe((createdBatch: ICommonApiResponse) => {
-        this.onAddEditBatchSuccess(createdBatch);
-      });
+      // add new batch from below method
+      this.createNewBatchApi(newBatch);
     } else {
       this.batchForm.markAllAsTouched();
     }
@@ -180,16 +209,22 @@ export class BatchMaster implements OnInit, OnDestroy {
       endDate: new Date(batch.endDate).toISOString().substring(0, 10),
       isActive: batch.isActive
     });
-    console.log('Editing batch:', this.batchForm.value);
     this.openModal();
   }
 
   // delete batch using id
   deleteBatch(batchId: number) {
     // Implement delete logic here
-    this.batchServie.deleteBatch(batchId).subscribe(() => {
-      this.batches.update(values => values.filter(batch => batch.batchId !== batchId));
-    });
+    let deleteApiSubscriber = this.batchServie.deleteBatch(batchId).subscribe({
+      next: (res) => {
+        this.batches.update(values => values.filter(batch => batch.batchId !== batchId));
+      },
+      error: (error) => {
+        alert(error.error.message);
+      }
+    })
+
+    this.subscriptionList.push(deleteApiSubscriber);
   }
 
 }

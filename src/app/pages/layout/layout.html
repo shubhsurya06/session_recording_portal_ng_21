@@ -2,26 +2,20 @@
 <div class="flex bg-slate-50">
 
     <!-- SIDEBAR -->
-    <aside class="bg-white border-r border-slate-200 fixed left-0 h-[calc(100vh-0.8rem)]
+    <aside class="bg-black border-r border-slate-200 fixed left-0 h-[calc(100vh-0.01rem)]
            transition-all duration-300 ease-in-out" [ngClass]="isSidebarCollapsed() ? 'w-16' : 'w-56'">
-        @if (!isSidebarCollapsed()) {
-        <div class="flex items-center p-4">
+        
+        <div class="flex justify-center p-4">
             <div class="h-8 w-8 bg-indigo-600 rounded flex items-center justify-center">
                 <span class="text-white font-bold">S</span>
             </div>
-            <span class="ml-2 font-bold text-slate-800 text-lg">
-                Recording Portal
-            </span>
         </div>
-        } @else {
-            <div class="mt-15"></div>
-        }
 
         <nav class="flex flex-col p-2 gap-1">
 
             <!-- DASHBOARD -->
             <a routerLink="/dashboard" routerLinkActive="bg-indigo-600 text-white"
-                class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-700 hover:bg-indigo-400 hover:text-white font-semibold transition mt-2 mb-2 text-bold">
+                class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-300 hover:bg-indigo-400 hover:text-white font-semibold transition mt-2 mb-2 text-bold">
                 <!-- Icon -->
                 <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -36,7 +30,7 @@
             </a>
 
             <!-- BATCH -->
-            <a routerLink="/batch" routerLinkActive="bg-indigo-600 text-white" class="flex items-center gap-3 px-3 py-2 mb-2 rounded-md text-slate-700
+            <a routerLink="/batch" routerLinkActive="bg-indigo-600 text-white" class="flex items-center gap-3 px-3 py-2 mb-2 rounded-md text-slate-300
                hover:bg-indigo-400 hover:text-white font-semibold transition">
                 <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -72,22 +66,17 @@
                         </svg>
                     </button>
                     <span
-                        class="absolute bottom-15 left-1 whitespace-nowrap rounded bg-slate-900 px-2 py-1
+                        class="absolute top-15 left-1 whitespace-nowrap rounded bg-slate-900 px-2 py-1
              text-xs text-white opacity-0 peer-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
                         {{ isSidebarCollapsed() ? 'Show Sidebar' : 'Hide Sidebar' }}
                     </span>
 
                     <!-- Logo -->
-                    @if (isSidebarCollapsed()) {
                     <div class="flex items-center">
-                        <div class="h-8 w-8 bg-indigo-600 rounded flex items-center justify-center">
-                            <span class="text-white font-bold">S</span>
-                        </div>
                         <span class="ml-2 font-bold text-slate-800 text-lg">
                             Recording Portal
                         </span>
                     </div>
-                    }
                 </div>
 
                 <!-- RIGHT -->

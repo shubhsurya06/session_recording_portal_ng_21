@@ -1,6 +1,6 @@
 <div class="bg-slate-50 overflow-y-auto h-[calc(100vh-4rem)]">
 
-    <div class="max-w-7xl mx-auto mb-2 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="px-2 mx-auto mb-2 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Batch Management</h1>
             <p class="text-slate-500 text-sm mt-1">Manage, track, and schedule your training batches.</p>
@@ -70,7 +70,7 @@
         </div>
     </div>
     } @else {
-    <div class="max-w-7xl mx-auto">
+    <div class="px-2 mx-auto">
         @if (paginatedBatches().length) {
         @if (viewMode() === tableViewMode) {
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
