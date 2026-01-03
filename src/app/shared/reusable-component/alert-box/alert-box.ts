@@ -1,4 +1,4 @@
-import { Component, Input, signal, Output, EventEmitter } from '@angular/core';
+import { Component, Input, signal, Output, EventEmitter, input, output } from '@angular/core';
 import { NgClass } from '@angular/common';
 
 @Component({
@@ -9,17 +9,13 @@ import { NgClass } from '@angular/common';
 })
 export class AlertBox {
 
-  @Input()
-  title: string = '';
+  // ✅ Input signals
+  title = input<string>();
+  message = input<string>();
+  isSuccess = input<boolean>();
 
-  @Input()
-  message: string = '';
-
-  @Input()
-  isSuccess: boolean = false;
-
-  @Output()
-  sendEventEmitter: EventEmitter<boolean> = new EventEmitter();
+  // ✅ Output signal
+  sendEventEmitter = output<boolean>();
 
   // hide alert box
   hideAlert(flag: boolean) {

@@ -256,16 +256,20 @@ export class BatchMaster implements OnInit, OnDestroy {
   }
 
   // delete batch using id
-  deleteBatch(batchId: number) {
-    // Implement delete logic here
-    let deleteApiSubscriber = this.batchServie.deleteBatch(14525).subscribe({
+  deleteBatch(batch: IBatch) {
+    let batchId = batch.batchId;
+    batch.isDeleteLoader = true;
+
+    let deleteApiSubscriber = this.batchServie.deleteBatch(2343242).subscribe({
       next: (res: ICommonApiResponse) => {
+        batch.isDeleteLoader = false;
         this.errorTitle.set(MESSAGE_TITLE.BATCH.DELETE);
         this.createAlertData(res);
 
         this.batches.update(values => values.filter(batch => batch.batchId !== batchId));
       },
       error: (error: any) => {
+        batch.isDeleteLoader = false;
         this.errorTitle.set(MESSAGE_TITLE.BATCH.DELETE);
         this.createAlertData(error.error);
       }

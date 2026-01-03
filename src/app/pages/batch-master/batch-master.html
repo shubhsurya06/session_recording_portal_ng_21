@@ -154,13 +154,19 @@
                                         </svg>
                                         Edit
                                     </button>
-                                    <button (click)="deleteBatch(batch.batchId)"
+                                    <button (click)="deleteBatch(batch)"
                                         class="flex items-center gap-1 hover:cursor-pointer border border-red-400 px-2.5 py-1 rounded-md text-white bg-red-500 hover:bg-red-600 text-white transition-colors text-sm font-medium">
+                                        @if (!batch.isDeleteLoader) {
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
                                         Delete
+                                        } @else {
+                                        <div
+                                            class="h-4 w-4 animate-spin rounded-full border-4 border-red-200 border-t-white">
+                                        </div>
+                                        }
                                     </button>
                                 </div>
                             </td>
@@ -223,13 +229,18 @@
                         Edit
                     </button>
                     <div class="w-px h-4 bg-slate-300"></div>
-                    <button (click)="deleteBatch(batch.batchId)"
+                    <button (click)="deleteBatch(batch)"
                         class="flex items-center gap-1.5 text-xs font-medium bg-red-500 hover:bg-red-600 text-white hover:cursor-pointer border border-red-400 px-2.5 py-1 rounded-md transition-colors">
+                        @if (!batch.isDeleteLoader) {
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                         Delete
+                        } @else {
+                        <div class="h-4 w-4 animate-spin rounded-full border-4 border-red-200 border-t-white"></div>
+                        }
+
                     </button>
                 </div>
             </div>
@@ -262,7 +273,8 @@
     }
 
     @if (isShowAlert()) {
-        <app-alert-box [title]="errorTitle()" [message]="errorMessage()" [isSuccess]="isError()" (sendEventEmitter)="showAlertError($event)"></app-alert-box>
+    <app-alert-box [title]="errorTitle()" [message]="errorMessage()" [isSuccess]="isError()"
+        (sendEventEmitter)="showAlertError($event)"></app-alert-box>
     }
 
     @if (isModalOpen()) {

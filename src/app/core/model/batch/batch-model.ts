@@ -7,4 +7,5 @@ export interface IBatch {
     isActive: boolean;
     createdAt: string;
     updatedAt: string;
+    isDeleteLoader?: boolean;
 }
