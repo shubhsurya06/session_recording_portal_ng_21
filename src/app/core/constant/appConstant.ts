@@ -9,5 +9,12 @@ export const APP_CONSTANT = {
     VIEW_MODE: ['table', 'card'],
     SLASH_CONST: '/',
     PAGE_SIZE: 10,
-    TIMEOUT: 5000
+    TIMEOUT: 5000,
+    MESSAGE_TITLE: {
+        BATCH: {
+            DELETE: 'Batch Delete',
+            ADD: 'Batch Add',
+            EDIT: 'Batch Edit'
+        }
+    }
 }

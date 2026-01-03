@@ -44,9 +44,9 @@ export class BatchService {
   }
 
   // delete batch method using id
-  deleteBatch(batchId: number) {
+  deleteBatch(batchId: number): Observable<ICommonApiResponse> {
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCHES}/${batchId}`;
-    return this.http.delete<void>(url);
+    return this.http.delete<ICommonApiResponse>(url);
   }
 
 

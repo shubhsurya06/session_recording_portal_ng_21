@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, computed, OnDestroy } from '@angular/core';
+import { Component, inject, signal, OnInit, computed, OnDestroy, ViewChild, ElementRef, HostListener, Host } from '@angular/core';
 import { BatchService } from '../../core/services/batch/batch-service';
 import { IBatch } from '../../core/model/batch/batch-model';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -6,10 +6,13 @@ import { NgClass } from '@angular/common';
 import { APP_CONSTANT } from '../../core/constant/appConstant';
 import { ICommonApiResponse } from '../../core/model/common/common.model';
 import { Subscription } from 'rxjs';
+import { AlertBox } from '../../shared/reusable-component/alert-box/alert-box';
+
+const MESSAGE_TITLE = APP_CONSTANT.MESSAGE_TITLE;
 
 @Component({
   selector: 'app-batch-master',
-  imports: [ReactiveFormsModule, NgClass],
+  imports: [ReactiveFormsModule, NgClass, AlertBox],
   templateUrl: './batch-master.html',
   styleUrl: './batch-master.css',
 })
@@ -17,41 +20,52 @@ export class BatchMaster implements OnInit, OnDestroy {
   // Form Group
   batchForm: FormGroup;
 
+  // inject BatchService
+  batchServie = inject(BatchService);
+
   // View Modes (table or card)
   tableViewMode = APP_CONSTANT.VIEW_MODE[0];
   cardViewMode = APP_CONSTANT.VIEW_MODE[1];
 
-  // inject BatchService
-  batchServie = inject(BatchService);
-
   // signal to hold batches list
   batches = signal<IBatch[]>([]);
 
-  // --- Signals for State Management ---
+  // current selected VIEW MODE (Table/Card)
   viewMode = signal<string>(this.tableViewMode); // Default to Table
+
+  // whether Add/Edit modal is open or not
   isModalOpen = signal<boolean>(false);
-  currentPage = signal<number>(1);
+
+  // Show alert when error comes
+  isShowAlert = signal<boolean>(false);
+
+  // loaders
   getBatchLoader = signal<boolean>(false);
   isAddEditBatchLoader = signal<boolean>(false);
 
   // --- Computed Pagination Logic ---
   itemsPerPage = signal<number>(APP_CONSTANT.PAGE_SIZE);
-
+  // current page no
+  currentPage = signal<number>(1);
   // pagination logic
   paginatedBatches = computed(() => {
     const start = (this.currentPage() - 1) * this.itemsPerPage();
     return this.batches().slice(0, start + this.itemsPerPage());
   });
-
   // total Pages based on total data received
   totalPages = computed(() => Math.ceil(this.batches().length / this.itemsPerPage()));
-
   // NEW: Generate array of page numbers for the template loop
   pagesArray = computed(() => {
     return Array.from({ length: this.totalPages() }, (_, i) => i + 1);
   });
 
+  // Subscription array data
   subscriptionList: Subscription[] = [];
+
+  // use child component to show alert error
+  errorTitle = signal<string>('');
+  errorMessage = signal<string>('');
+  isError = signal<boolean>(false);
 
   constructor(private fb: FormBuilder) {
     this.batchForm = this.fb.group({
@@ -75,6 +89,17 @@ export class BatchMaster implements OnInit, OnDestroy {
     this.subscriptionList = [];
   }
 
+  /**
+   * Close alert box on document click
+   * @param event 
+   */
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent) {
+    if (this.isShowAlert()) {
+      this.showAlertError(false);
+    }
+  }
+
   // get batches list
   getBatches() {
     this.getBatchLoader.set(true);
@@ -91,6 +116,10 @@ export class BatchMaster implements OnInit, OnDestroy {
     this.currentPage.set(1); // Reset to page 1 on view switch
   }
 
+  /**
+   * Change to next page/any selected page
+   * @param page 
+   */
   changePage(page: number) {
     if (page >= 1 && page <= this.totalPages()) {
       this.currentPage.set(page);
@@ -106,10 +135,14 @@ export class BatchMaster implements OnInit, OnDestroy {
     this.isAddEditBatchLoader.set(false);
 
     if (this.batchForm.value.batchId) {
+      this.errorTitle.set(MESSAGE_TITLE.BATCH.EDIT);
       this.batches.update(values => values.map(batch => batch.batchId === resBatch.batchId ? resBatch : batch));
     } else {
+      this.errorTitle.set(MESSAGE_TITLE.BATCH.ADD);
       this.batches.update(values => [resBatch, ...values]);
     }
+
+    this.createAlertData(batch);
 
     this.closeModal();
   }
@@ -119,8 +152,14 @@ export class BatchMaster implements OnInit, OnDestroy {
    * @param error 
    */
   onAddEditBatchError(error: ICommonApiResponse) {
+    if (this.batchForm.value.batchId) {
+      this.errorTitle.set(MESSAGE_TITLE.BATCH.EDIT);
+    } else {
+      this.errorTitle.set(MESSAGE_TITLE.BATCH.ADD);
+    }
+    this.createAlertData(error);
+
     this.isAddEditBatchLoader.set(false);
-    alert(error.message);
   }
 
   /**
@@ -199,6 +238,10 @@ export class BatchMaster implements OnInit, OnDestroy {
     this.batchForm.reset({ isActive: true }); // Reset form
   }
 
+  /**
+   * Set form data when click on edit
+   * @param batch 
+   */
   editBatch(batch: IBatch) {
     // Implement edit logic here
     this.batchForm.setValue({
@@ -215,16 +258,38 @@ export class BatchMaster implements OnInit, OnDestroy {
   // delete batch using id
   deleteBatch(batchId: number) {
     // Implement delete logic here
-    let deleteApiSubscriber = this.batchServie.deleteBatch(batchId).subscribe({
-      next: (res) => {
+    let deleteApiSubscriber = this.batchServie.deleteBatch(14525).subscribe({
+      next: (res: ICommonApiResponse) => {
+        this.errorTitle.set(MESSAGE_TITLE.BATCH.DELETE);
+        this.createAlertData(res);
+
         this.batches.update(values => values.filter(batch => batch.batchId !== batchId));
       },
-      error: (error) => {
-        alert(error.error.message);
+      error: (error: any) => {
+        this.errorTitle.set(MESSAGE_TITLE.BATCH.DELETE);
+        this.createAlertData(error.error);
       }
     })
 
     this.subscriptionList.push(deleteApiSubscriber);
+  }
+
+  /**
+   * Show success/error alert message using re-usable component
+   * @param data 
+   */
+  createAlertData(data: ICommonApiResponse) {
+    this.errorMessage.set(data.message);
+    this.isError.set(data.result);
+    this.isShowAlert.set(true);
+  }
+
+  /**
+   * Hide and Show SUCCESS/ERROR alert message
+   * @param flag 
+   */
+  showAlertError(flag: any) {
+    this.isShowAlert.set(flag);
   }
 
 }

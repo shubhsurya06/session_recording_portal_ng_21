@@ -258,26 +258,12 @@
         </div>
         }
 
-        <!-- <div class="mt-4 flex items-center justify-between border-t border-slate-200 pt-2">
-                <div class="text-sm text-slate-500">
-                    Showing page <span class="font-medium text-slate-900">{{ currentPage() }}</span> of <span
-                        class="font-medium text-slate-900">{{ totalPages() }}</span>
-                </div>
-                <div class="flex gap-2">
-                    <button (click)="changePage(currentPage() - 1)" [disabled]="currentPage() === 1"
-                        class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                        Previous
-                    </button>
-                    <button (click)="changePage(currentPage() + 1)" [disabled]="currentPage() === totalPages()"
-                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-colors">
-                        Next
-                    </button>
-                </div>
-            </div> -->
-
     </div>
     }
 
+    @if (isShowAlert()) {
+        <app-alert-box [title]="errorTitle()" [message]="errorMessage()" [isSuccess]="isError()" (sendEventEmitter)="showAlertError($event)"></app-alert-box>
+    }
 
     @if (isModalOpen()) {
     <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
