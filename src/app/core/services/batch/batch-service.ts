@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { IBatch } from '../../model/batch/batch-model';
+import { IBatch } from '../../model/interfaces/batch/batch-model';
 import { HttpClient } from '@angular/common/http';
 import { APP_CONSTANT } from '../../constant/appConstant';
 import { API_CONSTANT } from '../../constant/apiConstant';
 import { environment } from '../../../../environments/environment.development';
 import { map, delay } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { ICommonApiResponse } from '../../model/common/common.model';
+import { ICommonApiResponse } from '../../model/interfaces/common/common.model';
 
 
 @Injectable({

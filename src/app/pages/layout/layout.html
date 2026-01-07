@@ -4,7 +4,7 @@
     <!-- SIDEBAR -->
     <aside class="bg-black border-r border-slate-200 fixed left-0 h-[calc(100vh-0.01rem)]
            transition-all duration-300 ease-in-out" [ngClass]="isSidebarCollapsed() ? 'w-16' : 'w-56'">
-        
+
         <div class="flex justify-center p-4">
             <div class="h-8 w-8 bg-indigo-600 rounded flex items-center justify-center">
                 <span class="text-white font-bold">S</span>
@@ -40,6 +40,20 @@
                 <span class="whitespace-nowrap transition-all duration-200"
                     [ngClass]="isSidebarCollapsed() ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'">
                     Batch
+                </span>
+            </a>
+
+            <!-- BATCH -->
+            <a routerLink="/candidate" routerLinkActive="bg-indigo-600 text-white" class="flex items-center gap-3 px-3 py-2 mb-2 rounded-md text-slate-300
+               hover:bg-indigo-400 hover:text-white font-semibold transition">
+                <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 14a4 4 0 10-8 0m8 0a4 4 0 11-8 0m8 0v1a6 6 0 01-12 0v-1m12-6a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+
+                <span class="whitespace-nowrap transition-all duration-200"
+                    [ngClass]="isSidebarCollapsed() ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'">
+                    Candidate
                 </span>
             </a>
 
@@ -100,7 +114,7 @@
             </div>
         </nav>
         <router-outlet></router-outlet>
-        
+
     </main>
 
 </div>

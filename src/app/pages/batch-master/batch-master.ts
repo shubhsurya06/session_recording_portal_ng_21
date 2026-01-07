@@ -1,10 +1,10 @@
 import { Component, inject, signal, OnInit, computed, OnDestroy, ViewChild, ElementRef, HostListener, Host } from '@angular/core';
 import { BatchService } from '../../core/services/batch/batch-service';
-import { IBatch } from '../../core/model/batch/batch-model';
+import { IBatch } from '../../core/model/interfaces/batch/batch-model';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { APP_CONSTANT } from '../../core/constant/appConstant';
-import { ICommonApiResponse } from '../../core/model/common/common.model';
+import { ICommonApiResponse } from '../../core/model/interfaces/common/common.model';
 import { Subscription } from 'rxjs';
 import { AlertBox } from '../../shared/reusable-component/alert-box/alert-box';
 
@@ -24,8 +24,8 @@ export class BatchMaster implements OnInit, OnDestroy {
   batchServie = inject(BatchService);
 
   // View Modes (table or card)
-  tableViewMode = APP_CONSTANT.VIEW_MODE[0];
-  cardViewMode = APP_CONSTANT.VIEW_MODE[1];
+  tableViewMode = APP_CONSTANT.VIEW_MODE.TABLE_VIEW;
+  cardViewMode = APP_CONSTANT.VIEW_MODE.CARD_VIEW;
 
   // signal to hold batches list
   batches = signal<IBatch[]>([]);
@@ -260,7 +260,7 @@ export class BatchMaster implements OnInit, OnDestroy {
     let batchId = batch.batchId;
     batch.isDeleteLoader = true;
 
-    let deleteApiSubscriber = this.batchServie.deleteBatch(2343242).subscribe({
+    let deleteApiSubscriber = this.batchServie.deleteBatch(batchId).subscribe({
       next: (res: ICommonApiResponse) => {
         batch.isDeleteLoader = false;
         this.errorTitle.set(MESSAGE_TITLE.BATCH.DELETE);

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { IUser } from '../../model/user/user-model';
+import { IUser } from '../../model/interfaces/user/user-model';
 import { APP_CONSTANT } from '../../constant/appConstant';
 import { API_CONSTANT } from '../../constant/apiConstant';
 import { HttpClient } from '@angular/common/http';

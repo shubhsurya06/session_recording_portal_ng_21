@@ -6,7 +6,10 @@ export const APP_CONSTANT = {
     USER_ROLES: {
         SYSTEM_ADMIN: 'Admin'
     },
-    VIEW_MODE: ['table', 'card'],
+    VIEW_MODE: {
+        TABLE_VIEW: 'table',
+        CARD_VIEW: 'card'
+    },
     SLASH_CONST: '/',
     PAGE_SIZE: 10,
     TIMEOUT: 5000,
@@ -15,6 +18,11 @@ export const APP_CONSTANT = {
             DELETE: 'Batch Delete',
             ADD: 'Batch Add',
             EDIT: 'Batch Edit'
+        },
+        CANDIDATE: {
+            DELETE: 'Candidate Delete',
+            ADD: 'Candidate Add',
+            EDIT: 'Candidate Edit'
         }
     }
 }
