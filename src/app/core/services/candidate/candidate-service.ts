@@ -22,6 +22,22 @@ export class CandidateService {
     );
   }
 
+  addCandidate(candidate: C_Candidate): Observable<ICommonApiResponse> {
+    const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.CANDIDATES}`;
+    return this.http.post<ICommonApiResponse>(url, candidate).pipe(
+      delay(2000)
+    );
+  }
+
+
+  // update batch method
+  updateCandidate(candidate: C_Candidate): Observable<ICommonApiResponse> {
+    const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.CANDIDATES}/${candidate.candidateId}`;
+    return this.http.put<ICommonApiResponse>(url, candidate).pipe(
+      delay(2000)
+    );
+  }
+
   // delete candidate method using id
   deleteCandidate(candidateId: number) {
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.CANDIDATES}/${candidateId}`;
@@ -29,5 +45,5 @@ export class CandidateService {
       delay(2000)
     );
   }
-  
+
 }

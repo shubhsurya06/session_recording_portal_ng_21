@@ -5,12 +5,13 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angula
 import { ICommonApiResponse } from '../../core/model/interfaces/common/common.model';
 import { APP_CONSTANT } from '../../core/constant/appConstant';
 import { AlertBox } from '../../shared/reusable-component/alert-box/alert-box';
+import { NgClass } from '@angular/common';
 
 const MESSAGE_TITLE = APP_CONSTANT.MESSAGE_TITLE;
 
 @Component({
   selector: 'app-candidates',
-  imports: [ReactiveFormsModule, AlertBox],
+  imports: [ReactiveFormsModule, AlertBox, NgClass],
   templateUrl: './candidates.html',
   styleUrl: './candidates.css',
 })
@@ -24,6 +25,9 @@ export class Candidates {
 
   // get candidate loader
   isCandidateLoading = signal<boolean>(false);
+
+  // add / candidate loader
+  isAddEditCandidateLoader = signal<boolean>(false);
 
   // View Modes (table or card)
   tableViewMode = APP_CONSTANT.VIEW_MODE.TABLE_VIEW;
@@ -135,11 +139,125 @@ export class Candidates {
     });
   }
 
-  editCandidate(candidate: C_Candidate) {
+  /**
+   * Perform below operations when candidate Add/EDIT success
+   * @param candidate 
+   */
+  onAddEditSuccess(res: ICommonApiResponse) {
+    let candidate = res.data;
+    this.isAddEditCandidateLoader.set(false);
 
+    if (this.candidateForm.value.candidateId) {
+      this.errorTitle.set(MESSAGE_TITLE.BATCH.EDIT);
+      this.candidateList.update(values => values.map(user => user.candidateId === candidate.candidateId ? candidate : user));
+    } else {
+      this.errorTitle.set(MESSAGE_TITLE.BATCH.ADD);
+      this.candidateList.update(values => [candidate, ...values]);
+    }
+
+    this.createAlertData(res);
+
+    this.closeModal();
   }
 
-  // delete batch using id
+  /**
+   * Handle error after Add/Edit api got failed
+   * @param error 
+   */
+  onAddEditError(error: ICommonApiResponse) {
+    if (this.candidateForm.value.candidateId) {
+      this.errorTitle.set(MESSAGE_TITLE.BATCH.EDIT);
+    } else {
+      this.errorTitle.set(MESSAGE_TITLE.BATCH.ADD);
+    }
+    this.createAlertData(error);
+
+    this.isAddEditCandidateLoader.set(false);
+  }
+
+  /**
+   * Call update API and handle its success/error
+   * @param newBatch 
+   */
+  editcandidateIdApi(candidate: C_Candidate) {
+    let editApiSubscriber = this.candidateService.updateCandidate(candidate).subscribe({
+      next: (updatedBatch: ICommonApiResponse) => {
+        this.onAddEditSuccess(updatedBatch);
+      },
+      error: (error: any) => {
+        this.onAddEditError(error.error);
+      }
+    });
+    // this.subscriptionList.push(editApiSubscriber);
+  }
+
+  /**
+   * call save candidate API and handle its success/error
+   * @param candidate 
+   */
+  createNewCandidateApi(candidate: C_Candidate) {
+    let addApiSubscriber = this.candidateService.addCandidate(candidate).subscribe({
+      next: (res: ICommonApiResponse) => {
+        this.onAddEditSuccess(res);
+      },
+      error: (error: any) => {
+
+        this.onAddEditError(error.error);
+      }
+    });
+  }
+  
+  /**
+   * Save candidate (Add/Edit)
+   */
+  saveCandidate() {
+    console.log('this is form details:', this.candidateForm.value);
+    if (this.candidateForm.valid) {
+      const candidate: C_Candidate = {
+        ...this.candidateForm.value
+      };
+      if (!candidate.candidateId) {
+        candidate.candidateId = 0;
+        candidate.createdAt = new Date().toISOString().substring(0, 10);
+        candidate.updatedAt = new Date().toISOString().substring(0, 10);
+      }
+
+      this.isAddEditCandidateLoader.set(true);
+
+      // Update existing candidate
+      if (candidate.candidateId && candidate.candidateId > 0) {
+        this.editcandidateIdApi(candidate);
+        return;
+      }
+
+      // add new candidate from below method
+      this.createNewCandidateApi(candidate);
+    } else {
+      this.candidateForm.markAllAsTouched();
+    }
+  }
+
+  /**
+   * Edit candidate by populating form values
+   * @param candidate 
+   */
+  editCandidate(candidate: C_Candidate) {
+    // Implement edit logic here
+    this.candidateForm.setValue({
+      candidateId: candidate.candidateId,
+      fullName: candidate.fullName,
+      email: candidate.email,
+      mobileNumber: candidate.mobileNumber,
+      password: candidate.password,
+      role: candidate.role,
+      isActive: candidate.isActive,
+      createdAt: new Date(candidate.createdAt).toISOString().substring(0, 10),
+      updatedAt: new Date(candidate.updatedAt).toISOString().substring(0, 10),
+    });
+    this.openModal();
+  }
+
+  // delete candidate using id
   deleteCandidate(candidate: C_Candidate) {
     let candidateId = candidate.candidateId;
     candidate.isDeleteLoader = true;
