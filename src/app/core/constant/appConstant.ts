@@ -3,9 +3,7 @@ export const APP_CONSTANT = {
         TOKEN: 'sessionRecordingAppToken',
         USER_DETAILS: 'sessionRecordingUserData'
     },
-    USER_ROLES: {
-        SYSTEM_ADMIN: 'Admin'
-    },
+    USER_ROLES: ['Super Admin', 'Candidate'],
     VIEW_MODE: {
         TABLE_VIEW: 'table',
         CARD_VIEW: 'card'
@@ -23,6 +21,11 @@ export const APP_CONSTANT = {
             DELETE: 'Candidate Delete',
             ADD: 'Candidate Add',
             EDIT: 'Candidate Edit'
+        },
+        ENROLLMENT: {
+            ADD: 'Enrollment Add',
+            EDIT: 'Enrollment Edit',
+            DELETE: 'Enrollment Delete'
         }
     }
 }

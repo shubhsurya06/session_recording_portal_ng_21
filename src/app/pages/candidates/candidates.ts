@@ -29,6 +29,9 @@ export class Candidates {
   // add / candidate loader
   isAddEditCandidateLoader = signal<boolean>(false);
 
+  // user roles allowed
+  userRoles = APP_CONSTANT.USER_ROLES;
+
   // View Modes (table or card)
   tableViewMode = APP_CONSTANT.VIEW_MODE.TABLE_VIEW;
   cardViewMode = APP_CONSTANT.VIEW_MODE.CARD_VIEW;
@@ -130,6 +133,9 @@ export class Candidates {
   closeModal() {
     this.isModalOpen.set(false);
     this.candidateForm.reset({ isActive: true }); // Reset form
+    this.candidateForm.patchValue({
+      role: ''
+    });
   }
 
   // Helper for Date Formatting in UI

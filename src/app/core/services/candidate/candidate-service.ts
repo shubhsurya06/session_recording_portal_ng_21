@@ -18,14 +18,14 @@ export class CandidateService {
   getAllCandidates(): Observable<ICommonApiResponse> {
     let url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.CANDIDATES}`;
     return this.http.get<ICommonApiResponse>(url).pipe(
-      delay(2000)
+      delay(1000)
     );
   }
 
   addCandidate(candidate: C_Candidate): Observable<ICommonApiResponse> {
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.CANDIDATES}`;
     return this.http.post<ICommonApiResponse>(url, candidate).pipe(
-      delay(2000)
+      delay(1000)
     );
   }
 
@@ -34,7 +34,7 @@ export class CandidateService {
   updateCandidate(candidate: C_Candidate): Observable<ICommonApiResponse> {
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.CANDIDATES}/${candidate.candidateId}`;
     return this.http.put<ICommonApiResponse>(url, candidate).pipe(
-      delay(2000)
+      delay(1000)
     );
   }
 

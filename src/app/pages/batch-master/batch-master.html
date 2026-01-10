@@ -128,7 +128,7 @@
                             <!-- <td class="px-6 py-2 text-sm text-slate-500">#{{ batch.batchId }}</td> -->
                             <td class="px-6 py-2">
                                 <div class="text-sm font-medium text-slate-900">{{ batch.batchName }}</div>
-                                <div class="text-xs text-slate-500 truncate max-w-xs">{{ batch.description }}</div>
+                                <div class="text-xs text-slate-500 truncate max-w-xs" [title]="batch.description">{{ batch.description }}</div>
                             </td>
                             <td class="px-6 py-2">
                                 {{ formatDate(batch.startDate) }}
@@ -147,7 +147,7 @@
                             <td class="px-6 py-2 text-right">
                                 <div class="flex justify-end gap-3">
                                     <button (click)="editBatch(batch)"
-                                        class="flex items-center gap-1 hover:cursor-pointer border border-yellow-600 px-2.5 rounded-md py-1 text-white bg-yellow-500 hover:bg-yellow-600 text-white transition-colors text-sm font-medium">
+                                        class="flex items-center gap-1 hover:cursor-pointer px-2.5 rounded-md py-1 text-slate-900 bg-yellow-400 hover:bg-yellow-500  transition-colors text-sm font-medium">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -179,7 +179,71 @@
         }
 
         @if (viewMode() === cardViewMode) {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @for (batch of paginatedBatches(); track batch.batchId) {
+            <div
+                class="rounded-xl border border-slate-200 bg-white shadow-md hover:shadow-xl transition flex flex-col overflow-hidden">
+
+                <!-- Card Content -->
+                <div class="p-5 flex flex-col flex-1">
+                    <!-- Header -->
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <h3 class="text-base font-semibold text-slate-900">
+                                {{ batch.batchName }}
+                            </h3>
+                            <p class="text-sm text-slate-500">
+                                {{ batch.description }}
+                            </p>
+                        </div>
+
+                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                            [ngClass]="batch.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                            {{ batch.isActive ? 'Active' : 'Inactive' }}
+                        </span>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="space-y-2 text-sm text-slate-600 flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium text-slate-700">Start Date</span>
+                            <span>{{ formatDate(batch.startDate) }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium text-slate-700">End Date</span>
+                            <span>{{ formatDate(batch.endDate) }}</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Footer Actions (NO bottom padding) -->
+                <div class="bg-slate-100 border-t border-slate-200 flex justify-between px-5 py-3">
+                    <button (click)="editBatch(batch)" class="px-4 py-1.5 flex items-center gap-1 text-sm font-medium text-slate-900 bg-yellow-400 rounded-md
+                 hover:bg-yellow-500 hover:cursor-pointer transition">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Edit
+                    </button>
+
+                    <button (click)="deleteBatch(batch)" class="px-4 py-1.5 flex items-center gap-1 text-sm font-medium text-white bg-red-600 rounded-md
+                 hover:bg-red-700 hover:cursor-pointer transition">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Delete
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+
+
+        <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             @for (batch of paginatedBatches(); track batch.batchId) {
             <div
                 class="bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-xl transition-shadow duration-200 flex flex-col h-full overflow-hidden">
@@ -245,7 +309,7 @@
                 </div>
             </div>
             }
-        </div>
+        </div> -->
         }
 
         <div class="mt-4 mb-4 flex items-center justify-end border-t border-slate-200 pt-2">

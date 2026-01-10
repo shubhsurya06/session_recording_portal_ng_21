@@ -2,11 +2,11 @@
 
     <div class="px-2 mx-auto mb-2 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Candidates Management</h1>
-            <p class="text-slate-500 text-sm mt-1">Manage, track, and schedule candidates in your candidate.</p>
+            <h1 class="text-2xl font-bold text-slate-800">Enrollment Management</h1>
+            <p class="text-slate-500 text-sm mt-1">Manage, track, and schedule your enrollments.</p>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex-item-center-g3">
             <div class="bg-white border border-slate-200 rounded-lg p-1 flex shadow-sm">
                 <button (click)="toggleView(tableViewMode)" [class.bg-slate-100]="viewMode() === tableViewMode"
                     [class.text-indigo-600]="viewMode() === tableViewMode"
@@ -34,13 +34,13 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
-                Add Candidate
+                New Enrollment
             </button>
         </div>
     </div>
 
-    @if (isCandidateLoading()) {
-    <div class="mx-auto w-full max-w-xl rounded-md border border-slate-300 p-4">
+    @if (getEnrollmentLoader()) {
+    <div class="card">
         <div class="flex animate-pulse space-x-4">
             <div class="size-50 rounded-full bg-gray-200"></div>
             <div class="flex-1 space-y-6 py-1">
@@ -71,7 +71,7 @@
     </div>
     } @else {
     <div class="px-2 mx-auto">
-        @if (paginatedCandidates().length) {
+        @if (paginatedEnrollments().length) {
         @if (viewMode() === tableViewMode) {
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="overflow-x-auto">
@@ -86,16 +86,17 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                     </svg>
-                                    Candidate Name
+                                    User Name
                                 </div>
                             </th>
                             <th class="px-6 py-2">
                                 <div class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z" />
+                                            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                     </svg>
-                                    Email
+                                    Enrollment Name
                                 </div>
                             </th>
                             <th class="px-6 py-2">
@@ -116,18 +117,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
-                                    Registered Date
-                                </div>
-                            </th>
-                            <th class="px-6 py-2">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 12a4 4 0 100-8 4 4 0 000 8z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 20a6 6 0 0112 0" />
-                                    </svg>
-                                    Role
+                                    Start Date
                                 </div>
                             </th>
                             <th class="px-6 py-2">
@@ -144,47 +134,42 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @for (candidate of paginatedCandidates(); track candidate.candidateId) {
+                        @for (enrollment of paginatedEnrollments(); track enrollment.enrollmentId) {
                         <tr class="hover:bg-indigo-50/30 transition-colors duration-150 group">
-                            <!-- <td class="px-6 py-2 text-sm text-slate-500">#{{ candidate.candidateId }}</td> -->
                             <td class="px-6 py-2">
-                                <div class="text-sm font-medium text-slate-900">{{ candidate.fullName }}</div>
-                                <!-- <div class="text-xs text-slate-500 truncate max-w-xs">{{ candidate.description }}</div> -->
+                                <div class="text-sm font-medium text-slate-900">{{ enrollment.fullName }}</div>
                             </td>
                             <td class="px-6 py-2">
-                                {{candidate.email}}
+                                {{enrollment.batchName}}
                             </td>
                             <td class="px-6 py-2">
-                                {{candidate.mobileNumber}}
+                                {{enrollment.mobileNumber}}
                             </td>
                             <td class="px-6 py-2">
-                                {{ formatDate(candidate.updatedAt) }}
-                            </td>
-                            <td class="px-6 py-2">
-                                {{ candidate.role }}
+                                {{ formatDate(enrollment.enrollmentDate) }}
                             </td>
                             <td class="px-6 py-2">
                                 <span
-                                    [class]="candidate.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'"
+                                    [class]="enrollment.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'"
                                     class="px-2.5 py-1 rounded-full text-xs font-medium border"
-                                    [class.border-green-200]="candidate.isActive"
-                                    [class.border-red-200]="!candidate.isActive">
-                                    {{ candidate.isActive ? 'Active' : 'Inactive' }}
+                                    [class.border-green-200]="enrollment.isActive"
+                                    [class.border-red-200]="!enrollment.isActive">
+                                    {{ enrollment.isActive ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
                             <td class="px-6 py-2 text-right">
                                 <div class="flex justify-end gap-3">
-                                    <button (click)="editCandidate(candidate)"
-                                        class="flex items-center gap-1 text-sm font-medium text-slate-900 bg-yellow-400 px-2.5 rounded-md hover:bg-yellow-500  hover:cursor-pointer transition-colors ">
+                                    <button (click)="editEnrollment(enrollment)" class="flex items-center gap-1 hover:cursor-pointer px-4 py-1.5 font-medium text-slate-900 bg-yellow-400 rounded-md
+                 hover:bg-yellow-500 hover:cursor-pointer transition text-sm">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                         </svg>
                                         Edit
                                     </button>
-                                    <button (click)="deleteCandidate(candidate)"
+                                    <button (click)="deleteEnrollment(enrollment)"
                                         class="flex items-center gap-1 hover:cursor-pointer border border-red-400 px-2.5 py-1 rounded-md text-white bg-red-500 hover:bg-red-600 text-white transition-colors text-sm font-medium">
-                                        @if (!candidate.isDeleteLoader) {
+                                        @if (!enrollment.isDeleteLoader) {
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -208,7 +193,7 @@
 
         @if (viewMode() === cardViewMode) {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for (candidate of candidateList(); track candidate.candidateId) {
+            @for (item of paginatedEnrollments(); track item.enrollmentId) {
             <div
                 class="rounded-xl border border-slate-200 bg-white shadow-md hover:shadow-xl transition flex flex-col overflow-hidden">
 
@@ -223,58 +208,47 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5.121 17.804A5 5 0 0112 15a5 5 0 016.879 2.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                {{ candidate.fullName }}
+                                {{ item.fullName }}
                             </h3>
                         </div>
 
                         <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                            [ngClass]="candidate.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-                            {{ candidate.isActive ? 'Active' : 'Inactive' }}
+                            [ngClass]="item.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                            {{ item.isActive ? 'Active' : 'Inactive' }}
                         </span>
                     </div>
 
                     <!-- Details -->
                     <div class="space-y-2 text-sm text-slate-600 flex-1">
 
-                        <!-- Role -->
+                        <!-- Batch Name -->
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 14l9-5-9-5-9 5 9 5zM12 14l6.16-3.422M12 14v7m0 0l-6.16-3.422M12 21l6.16-3.422" />
                             </svg>
-                            <span class="font-medium text-slate-700">Role:</span>
-                            <span>{{ candidate.role }}</span>
+                            <span class="font-medium text-slate-700">Batch:</span>
+                            <span>{{ item.batchName }}</span>
                         </div>
 
-                        <!-- Email -->
+                        <!-- Mobile Number -->
                         <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z" />
-                            </svg>
-                            <span class="font-medium text-slate-700">Email:</span>
-                            <span>{{ candidate.email }}</span>
-                        </div>
-
-                        <!-- Mobile -->
-                        <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 4h10a1 1 0 011 1v14a1 1 0 01-1 1H7a1 1 0 01-1-1V5a1 1 0 011-1z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 18h2" />
+                                    d="M3 5h2l3 7-3 7H3l3-7-3-7zM21 5h-2l-3 7 3 7h2l-3-7 3-7z" />
                             </svg>
                             <span class="font-medium text-slate-700">Mobile:</span>
-                            <span>{{ candidate.mobileNumber }}</span>
+                            <span>{{ item.mobileNumber }}</span>
                         </div>
 
-                        <!-- Created Date -->
+                        <!-- Enrollment Date -->
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span class="font-medium text-slate-700">Created:</span>
-                            <span>{{ formatDate(candidate.createdAt) }}</span>
+                            <span class="font-medium text-slate-700">Enrolled:</span>
+                            <span>{{ item.enrollmentDate | date:'dd MMM yyyy' }}</span>
                         </div>
 
                     </div>
@@ -282,7 +256,7 @@
 
                 <!-- Footer Actions (NO bottom padding) -->
                 <div class="bg-slate-100 border-t border-slate-200 flex justify-between px-5 py-3">
-                    <button (click)="editCandidate(candidate)" class="px-4 py-1.5 flex items-center gap-1 text-sm font-medium text-slate-900 bg-yellow-400 rounded-md
+                    <button (click)="editEnrollment(item)" class="px-4 py-1.5 flex items-center gap-1 text-sm font-medium text-slate-900 bg-yellow-400 rounded-md
                  hover:bg-yellow-500 hover:cursor-pointer transition">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -291,7 +265,7 @@
                         Edit
                     </button>
 
-                    <button (click)="deleteCandidate(candidate)" class="px-4 py-1.5 flex items-center gap-1 text-sm font-medium text-white bg-red-600 rounded-md
+                    <button (click)="deleteEnrollment(item)" class="px-4 py-1.5 flex items-center gap-1 text-sm font-medium text-white bg-red-600 rounded-md
                  hover:bg-red-700 hover:cursor-pointer transition">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -303,7 +277,6 @@
             </div>
             }
         </div>
-
 
         }
 
@@ -324,7 +297,7 @@
 
         } @else {
         <div class="text-center py-10 text-slate-500">
-            Batches not available.
+            Enrollments not available.
         </div>
         }
 
@@ -355,7 +328,7 @@
                                     d="M12 11v4m2-2h-4" />
                             </svg>
 
-                            {{candidateForm.get('candidateId')?.value ? 'Edit Candidate' : 'Create Candidate'}}
+                            {{enrollmentForm.get('enrollmentId')?.value ? 'Edit Enrollment' : 'Create Enrollment'}}
                         </h3>
                         <button (click)="closeModal()" class="text-slate-400 hover:text-slate-500 hover:cursor-pointer">
                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -366,113 +339,78 @@
                     </div>
                 </div>
 
-                <form [formGroup]="candidateForm" (ngSubmit)="saveCandidate()" class="p-6 space-y-4">
+                <form [formGroup]="enrollmentForm" (ngSubmit)="saveEnrollment()" class="p-6 space-y-4">
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Full Name -->
+                    <!-- Row 1: Enrollment & Candidate -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Enrollment -->
                         <div>
-                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                                Candidate Full Name
+                            <label class="text-sm font-medium text-slate-700 mb-1 block">
+                                Batch <span class="text-red-500">*</span>
                             </label>
-                            <input formControlName="fullName" type="text"
-                                class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 border"
-                                placeholder="Enter full name">
-
-                            @if (candidateForm.get('fullName')?.touched && candidateForm.get('fullName')?.invalid) {
-                            <p class="text-sm text-red-600 mt-1">Full name is required.</p>
-                            }
-                        </div>
-
-                        <!-- Email -->
-                        <div>
-                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                                Email Address
-                            </label>
-                            <input formControlName="email" type="email"
-                                class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 border"
-                                placeholder="example@email.com">
-
-                            @if (candidateForm.get('email')?.touched && candidateForm.get('email')?.invalid) {
-                            <p class="text-sm text-red-600 mt-1">
-                                @if (candidateForm.get('email')?.errors?.['required']) { Email is required. }
-                                @if (candidateForm.get('email')?.errors?.['email']) { Enter a valid email address. }
-                            </p>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Mobile Number -->
-                        <div>
-                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                                Mobile Number
-                            </label>
-                            <input formControlName="mobileNumber" type="text" maxlength="10"
-                                class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 border"
-                                placeholder="10-digit mobile number">
-
-                            @if (candidateForm.get('mobileNumber')?.touched &&
-                            candidateForm.get('mobileNumber')?.invalid) {
-                            <p class="text-sm text-red-600 mt-1">
-                                Mobile number must be 10 digits.
-                            </p>
-                            }
-                        </div>
-
-                        <!-- Password -->
-                        <div>
-                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                                Password
-                            </label>
-                            <input formControlName="password" type="password"
-                                class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 border"
-                                placeholder="Minimum 6 characters">
-
-                            @if (candidateForm.get('password')?.touched && candidateForm.get('password')?.invalid) {
-                            <p class="text-sm text-red-600 mt-1">
-                                Password must be at least 6 characters.
-                            </p>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                        <!-- Role -->
-                        <div>
-                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                                Role
-                            </label>
-                            <select formControlName="role"
-                                class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 border bg-white">
-                                <option value="">Select role</option>
-                                @for (role of userRoles; track role) {
-                                <option [value]="role">{{ role }}</option>
+                            <select formControlName="batchId" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+               focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Select Batch</option>
+                                @for (batch of batchList(); track batch.batchId) {
+                                <option [value]="batch.batchId">{{ batch.batchName }}</option>
                                 }
                             </select>
 
-                            @if (candidateForm.get('role')?.touched && candidateForm.get('role')?.invalid) {
-                            <p class="text-sm text-red-600 mt-1">Role is required.</p>
-                            }
+                            <p *ngIf="enrollmentForm.get('batchId')?.touched && enrollmentForm.get('batchId')?.invalid"
+                                class="text-xs text-red-500 mt-1">
+                                Please select batch.
+                            </p>
+                        </div>
+
+                        <!-- Candidate -->
+                        <div>
+                            <label class="text-sm font-medium text-slate-700 mb-1 block">
+                                Candidate <span class="text-red-500">*</span>
+                            </label>
+                            <select formControlName="candidateId" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+               focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Select Candidate</option>
+                                @for (candidate of candidateList(); track candidate.candidateId) {
+                                <option [value]="candidate.candidateId">{{ candidate.fullName }}</option>
+                                }
+                            </select>
+
+                            <p *ngIf="enrollmentForm.get('candidateId')?.touched && enrollmentForm.get('candidateId')?.invalid"
+                                class="text-xs text-red-500 mt-1">
+                                Candidate is required
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Enrollment Date & Status -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Enrollment Date -->
+                        <div>
+                            <label class="text-sm font-medium text-slate-700 mb-1 block">
+                                Enrollment Date <span class="text-red-500">*</span>
+                            </label>
+                            <input type="date" formControlName="enrollmentDate" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+               focus:border-indigo-500 focus:ring-indigo-500" [min]="today" />
+
+                            <p *ngIf="enrollmentForm.get('enrollmentDate')?.touched && enrollmentForm.get('enrollmentDate')?.invalid"
+                                class="text-xs text-red-500 mt-1">
+                                Enrollment date is required
+                            </p>
                         </div>
 
                         <!-- Active Toggle -->
-                        <div class="flex items-center gap-3 pt-2">
-                            <div
-                                class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                                <input formControlName="isActive" type="checkbox" id="toggle"
-                                    class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 right-5 checked:border-indigo-600" />
-                                <label for="toggle"
-                                    class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer"></label>
-                            </div>
-                            <label for="toggle" class="text-sm font-medium text-slate-700">
-                                Set Candidate as Active
+                        <div class="flex items-center gap-3 pt-6">
+                            <input type="checkbox" formControlName="isActive" id="isActive"
+                                class="h-5 w-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                            <label for="isActive" class="text-sm font-medium text-slate-700">
+                                Active Enrollment
                             </label>
                         </div>
                     </div>
 
-                    <!-- Footer Buttons (UNCHANGED) -->
+                    <!-- Actions -->
                     <div class="mt-6 pt-4 border-t border-slate-100">
-                        @if (isAddEditCandidateLoader()) {
+                        @if (isAddEditEnrollLoader()) {
                         <div class="flex justify-center items-center">
                             <div
                                 class="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-indigo-600">
@@ -480,22 +418,21 @@
                         </div>
                         } @else {
                         <div class="flex justify-end gap-3">
-                            <button type="button" (click)="closeModal()"
-                                class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:cursor-pointer">
+                            <button type="button" (click)="closeModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 
+                                rounded-lg hover:bg-slate-50 hover:cursor-pointer transition-all">
                                 Cancel
                             </button>
 
-                            <button type="submit" [disabled]="candidateForm.invalid"
-                                [ngClass]="{'bg-green-600': !candidateForm.get('candidateId')?.value ,'hover:bg-green-700': !candidateForm.get('candidateId')?.value, 'bg-yellow-500': candidateForm.get('candidateId')?.value, 'hover:bg-yellow-600': candidateForm.get('candidateId')?.value,
-                            'focus:ring-yellow-500': candidateForm.get('candidateId')?.value, 'focus:ring-green-500': candidateForm.get('candidateId')?.value}"
+                            <button type="submit" [disabled]="enrollmentForm.invalid"
+                                [ngClass]="{'bg-green-600': !enrollmentForm.get('enrollmentId')?.value ,'hover:bg-green-700': !enrollmentForm.get('enrollmentId')?.value, 'bg-yellow-500': enrollmentForm.get('enrollmentId')?.value, 'hover:bg-yellow-600': enrollmentForm.get('enrollmentId')?.value,
+                                    'focus:ring-yellow-500': enrollmentForm.get('enrollmentId')?.value, 'focus:ring-green-500': enrollmentForm.get('enrollmentId')?.value}"
                                 class="px-4 py-2 text-sm font-medium text-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed hover:cursor-pointer">
-                                {{ candidateForm.get('candidateId')?.value ? 'Edit Batch' : 'Save Batch'}}
+                                {{ enrollmentForm.get('enrollmentId')?.value ? 'Edit Enrollment' : 'Save Enrollment'}}
                             </button>
                         </div>
                         }
                     </div>
                 </form>
-
 
             </div>
         </div>

@@ -23,7 +23,7 @@ export class BatchService {
   getBatches() : Observable<ICommonApiResponse>{
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCHES}`;
     return this.http.get<ICommonApiResponse>(url).pipe(
-      delay(2000)
+      delay(1000)
     );
   }
 
@@ -31,7 +31,7 @@ export class BatchService {
   addBatch(batch: IBatch): Observable<ICommonApiResponse> {
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCHES}`;
     return this.http.post<ICommonApiResponse>(url, batch).pipe(
-      delay(2000)
+      delay(1000)
     );
   }
 
