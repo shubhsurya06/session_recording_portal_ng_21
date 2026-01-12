@@ -1,3 +1,5 @@
+import { setAlertData, toggleAlert } from '../../shared/utils/alert-utils';
+import { setDeleteLoader } from '../../shared/utils/loader-utils';
 import { Component, computed, inject, signal, HostListener } from '@angular/core';
 import { CandidateService } from '../../core/services/candidate/candidate-service';
 import { C_Candidate } from '../../core/model/classes/candidate.class';
@@ -266,42 +268,34 @@ export class Candidates {
   // delete candidate using id
   deleteCandidate(candidate: C_Candidate) {
     let candidateId = candidate.candidateId;
-    candidate.isDeleteLoader = true;
+    setDeleteLoader(candidate, true);
 
     let deleteApiSubscriber = this.candidateService.deleteCandidate(candidateId).subscribe({
       next: (res: ICommonApiResponse) => {
-        candidate.isDeleteLoader = false;
+        setDeleteLoader(candidate, false);
         this.errorTitle.set(MESSAGE_TITLE.CANDIDATE.DELETE);
         this.createAlertData(res);
 
         this.candidateList.update(values => values.filter(candidate => candidate.candidateId !== candidateId));
       },
       error: (error: any) => {
-        candidate.isDeleteLoader = false;
+        setDeleteLoader(candidate, false);
         this.errorTitle.set(MESSAGE_TITLE.CANDIDATE.DELETE);
         this.createAlertData(error.error);
       }
-    })
+    });
 
     // this.subscriptionList.push(deleteApiSubscriber);
   }
 
-  /**
-   * Show success/error alert message using re-usable component
-   * @param data 
-   */
+  // Show success/error alert message using utility
   createAlertData(data: ICommonApiResponse) {
-    this.errorMessage.set(data.message);
-    this.isError.set(data.result);
-    this.isShowAlert.set(true);
+    setAlertData(this.errorMessage, this.isError, this.isShowAlert, data);
   }
 
-  /**
-   * Hide and Show SUCCESS/ERROR alert message
-   * @param flag 
-   */
+  // Hide and Show SUCCESS/ERROR alert message using utility
   showAlertError(flag: any) {
-    this.isShowAlert.set(flag);
+    toggleAlert(this.isShowAlert, flag);
   }
 
 }

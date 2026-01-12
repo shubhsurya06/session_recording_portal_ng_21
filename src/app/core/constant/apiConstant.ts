@@ -10,6 +10,9 @@ export const API_CONSTANT = {
     BATCH_ENROLLMENTS_API: {
         GET_ENROLLMENTS: '/GetAllEnrollment'
     },
+    SESSION_APIS: {
+        GET_SESSIONS: '/GetAllSessionsRecordings',
+    },
     BATCH_USER_APIS: {
         LOGIN: '/login',
     },

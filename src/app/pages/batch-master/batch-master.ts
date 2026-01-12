@@ -1,3 +1,4 @@
+import { setDeleteLoader } from '../../shared/utils/loader-utils';
 import { Component, inject, signal, OnInit, computed, OnDestroy, ViewChild, ElementRef, HostListener, Host } from '@angular/core';
 import { BatchService } from '../../core/services/batch/batch-service';
 import { IBatch } from '../../core/model/interfaces/batch/batch-model';
@@ -258,22 +259,22 @@ export class BatchMaster implements OnInit, OnDestroy {
   // delete batch using id
   deleteBatch(batch: IBatch) {
     let batchId = batch.batchId;
-    batch.isDeleteLoader = true;
+    setDeleteLoader(batch, true);
 
     let deleteApiSubscriber = this.batchServie.deleteBatch(batchId).subscribe({
       next: (res: ICommonApiResponse) => {
-        batch.isDeleteLoader = false;
+        setDeleteLoader(batch, false);
         this.errorTitle.set(MESSAGE_TITLE.BATCH.DELETE);
         this.createAlertData(res);
 
         this.batches.update(values => values.filter(batch => batch.batchId !== batchId));
       },
       error: (error: any) => {
-        batch.isDeleteLoader = false;
+        setDeleteLoader(batch, false);
         this.errorTitle.set(MESSAGE_TITLE.BATCH.DELETE);
         this.createAlertData(error.error);
       }
-    })
+    });
 
     this.subscriptionList.push(deleteApiSubscriber);
   }

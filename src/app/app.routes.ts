@@ -6,6 +6,7 @@ import { BatchMaster } from './pages/batch-master/batch-master';
 import { authGuard } from './core/guards/auth-guards-guard';
 import { Candidates } from './pages/candidates/candidates';
 import { Enrollments } from './pages/enrollments/enrollments';
+import { Sessions } from './pages/sessions/sessions';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -16,7 +17,8 @@ export const routes: Routes = [
             { path: 'dashboard', component: Dashboard, title: 'Dashboard:Session Recording' },
             { path: 'batch', component: BatchMaster, title: 'Batch Master:Session Recording' },
             { path: 'candidate', component: Candidates, title: 'Candidate:Session Recording' },
-            { path: 'enrollments', component: Enrollments, title: 'Enrollments:Session Recording' }
+            { path: 'enrollments', component: Enrollments, title: 'Enrollments:Session Recording' },
+            { path: 'sessions', component: Sessions, title: 'Sessions:Session Recording' }
         ],
         canActivate: [authGuard]
     },
