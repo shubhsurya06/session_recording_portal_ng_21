@@ -24,5 +24,29 @@ export class SessionService {
     );
   }
 
+  // create new session
+  createSession(sessionData: any): Observable<ICommonApiResponse> {
+    const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCH_SESSIONS}`;
+    return this.http.post<ICommonApiResponse>(url, sessionData).pipe(
+      delay(500)
+    );
+  }
+
+  // edit session
+  updateSession(sessionId: number, sessionData: any): Observable<ICommonApiResponse> {
+    const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCH_SESSIONS}/${sessionId}`;
+    return this.http.put<ICommonApiResponse>(url, sessionData).pipe(
+      delay(500)
+    );
+  }
+
+  // delete session
+  deleteSession(sessionId: number): Observable<ICommonApiResponse> {
+    const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCH_SESSIONS}/${sessionId}`;
+    return this.http.delete<ICommonApiResponse>(url).pipe(
+      delay(500)
+    );
+  }
+
 
 }

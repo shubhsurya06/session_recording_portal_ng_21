@@ -6,10 +6,10 @@ export class Session {
     topicDescription: string;
     youtubeVideoId: string;
     durationInMinutes: number;
-    sessionDate: Date;
+    sessionDate: string;
     displayOrder: number;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
     isDeleteLoader?: boolean;
 
     constructor() {
@@ -19,10 +19,10 @@ export class Session {
         this.topicDescription = '';
         this.youtubeVideoId = '';
         this.durationInMinutes = 0;
-        this.sessionDate = new Date();
+        this.sessionDate = new Date().toISOString().substring(0, 10);
         this.displayOrder = 0;
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.createdAt = new Date().toISOString().substring(0, 10);
+        this.updatedAt = new Date().toISOString().substring(0, 10);
         this.batchName = '';
         this.isDeleteLoader = false;
     }

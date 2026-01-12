@@ -174,75 +174,71 @@
         }
 
         @if (viewMode() === cardViewMode) {
-        <!-- <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            @for (candidate of candidateList(); track candidate.candidateId) {
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+            @for (session of paginatedSessions(); track session.sessionId) {
             <div
                 class="rounded-xl border border-slate-200 bg-white shadow-md hover:shadow-xl transition flex flex-col overflow-hidden">
 
+                <!-- Card Content -->
                 <div class="p-5 flex flex-col flex-1">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex flex-col">
-                            <h3 class="text-base font-semibold text-slate-900 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5.121 17.804A5 5 0 0112 15a5 5 0 016.879 2.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                {{ candidate.fullName }}
-                            </h3>
-                        </div>
 
-                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                            [ngClass]="candidate.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-                            {{ candidate.isActive ? 'Active' : 'Inactive' }}
-                        </span>
+                    <!-- Header -->
+                    <div class="flex items-start justify-between mb-4">
+                        <h3 class="text-base font-semibold text-slate-900 flex items-center gap-2">
+                            <!-- Topic Icon -->
+                            <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6l7 4-7 4-7-4 7-4zM5 10v6l7 4 7-4v-6" />
+                            </svg>
+                            {{ session.topicName }}
+                        </h3>
                     </div>
 
-                    <div class="space-y-2 text-sm text-slate-600 flex-1">
+                    <!-- Details -->
+                    <div class="space-y-3 text-sm text-slate-600 flex-1">
 
+                        <!-- Batch -->
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 14l9-5-9-5-9 5 9 5zM12 14l6.16-3.422M12 14v7m0 0l-6.16-3.422M12 21l6.16-3.422" />
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M9 20H4v-2a3 3 0 015.356-1.857M12 12a4 4 0 100-8 4 4 0 000 8z" />
                             </svg>
-                            <span class="font-medium text-slate-700">Role:</span>
-                            <span>{{ candidate.role }}</span>
+                            <span class="font-medium text-slate-700">Batch:</span>
+                            <span>{{ session.batchName }}</span>
                         </div>
 
+                        <!-- Session Date -->
                         <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z" />
+                                    d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span class="font-medium text-slate-700">Email:</span>
-                            <span>{{ candidate.email }}</span>
+                            <span class="font-medium text-slate-700">Date:</span>
+                            <span>{{ session.sessionDate | date:'dd MMM yyyy' }}</span>
                         </div>
 
-                        <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 4h10a1 1 0 011 1v14a1 1 0 01-1 1H7a1 1 0 01-1-1V5a1 1 0 011-1z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 18h2" />
-                            </svg>
-                            <span class="font-medium text-slate-700">Mobile:</span>
-                            <span>{{ candidate.mobileNumber }}</span>
-                        </div>
-
+                        <!-- Duration -->
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span class="font-medium text-slate-700">Created:</span>
-                            <span>{{ formatDate(candidate.createdAt) }}</span>
+                            <span class="font-medium text-slate-700">Duration:</span>
+                            <span>{{ session.durationInMinutes }} mins</span>
                         </div>
 
                     </div>
                 </div>
 
+                <!-- Footer Actions -->
                 <div class="bg-slate-100 border-t border-slate-200 flex justify-between px-5 py-3">
-                    <button (click)="editCandidate(candidate)" class="px-4 py-1.5 flex items-center gap-1 text-sm font-medium text-slate-900 bg-yellow-400 rounded-md
-                 hover:bg-yellow-500 hover:cursor-pointer transition">
+
+                    <!-- Edit -->
+                    <button (click)="editSession(session)" class="px-4 py-1.5 flex items-center gap-1 text-sm font-medium text-slate-900 bg-yellow-400 rounded-md
+               hover:bg-yellow-500 transition">
+
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -250,18 +246,23 @@
                         Edit
                     </button>
 
-                    <button (click)="deleteCandidate(candidate)" class="px-4 py-1.5 flex items-center gap-1 text-sm font-medium text-white bg-red-600 rounded-md
-                 hover:bg-red-700 hover:cursor-pointer transition">
+                    <!-- Delete -->
+                    <button (click)="deleteSession(session)" class="px-4 py-1.5 flex items-center gap-1 text-sm font-medium text-white bg-red-600 rounded-md
+               hover:bg-red-700 transition">
+
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M4 7h16" />
                         </svg>
                         Delete
                     </button>
+
                 </div>
             </div>
             }
-        </div> -->
+
+        </div>
+
         }
 
         <div class="mt-4 mb-4 flex items-center justify-end border-t border-slate-200 pt-2">
@@ -293,163 +294,162 @@
         (sendEventEmitter)="showAlertError($event)"></app-alert-box>
     }
 
-    <!-- @if (isModalOpen()) {
-    <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
+    @if (isModalOpen()) {
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
-        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full 
-            sm:max-w-lg border border-slate-100">
+        <!-- Modal -->
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl mx-4 overflow-hidden">
 
-                <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-slate-100">
-                    <div class="flex items-center justify-between">
-                        <h3 class="flex items-center gap-2 text-lg font-semibold leading-6 text-slate-900"
-                            id="modal-title">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 7a2 2 0 012-2h5l2 2h7a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 11v4m2-2h-4" />
-                            </svg>
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-slate-800">
+                    Add / Edit Session
+                </h2>
+                <button type="button" class="text-slate-400 hover:text-slate-600" (click)="closeModal()">
+                    ✕
+                </button>
+            </div>
 
-                            {{candidateForm.get('candidateId')?.value ? 'Edit Candidate' : 'Create Candidate'}}
-                        </h3>
-                        <button (click)="closeModal()" class="text-slate-400 hover:text-slate-500 hover:cursor-pointer">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
+            <!-- Form -->
+            <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()">
+
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <!-- Batch -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Batch</label>
+                        <select formControlName="batchId" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+               focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="">Select Batch</option>
+                            @for (batch of batchList(); track batch.batchId) {
+                            <option [value]="batch.batchId">{{ batch.batchName }}</option>
+                            }
+                        </select>
+                        <p *ngIf="f['batchId'].touched && f['batchId'].errors?.['required']"
+                            class="text-xs text-red-600 mt-1">
+                            Batch is required
+                        </p>
                     </div>
+
+                    <!-- Topic Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Topic Name</label>
+                        <input type="text" formControlName="topicName"
+                            [ngClass]="{'border-red-500': f['topicName'].touched && f['topicName'].invalid}"
+                            class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                        <p *ngIf="f['topicName'].touched && f['topicName'].errors?.['required']"
+                            class="text-xs text-red-600 mt-1">
+                            Topic name is required
+                        </p>
+                        <p *ngIf="f['topicName'].touched && f['topicName'].errors?.['maxlength']"
+                            class="text-xs text-red-600 mt-1">
+                            Maximum 100 characters allowed
+                        </p>
+                    </div>
+
+                    <!-- YouTube Video ID -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">YouTube Video ID</label>
+                        <input type="text" formControlName="youtubeVideoId"
+                            [ngClass]="{'border-red-500': f['youtubeVideoId'].touched && f['youtubeVideoId'].invalid}"
+                            class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                        <p *ngIf="f['youtubeVideoId'].touched && f['youtubeVideoId'].errors?.['required']"
+                            class="text-xs text-red-600 mt-1">
+                            YouTube Video ID is required
+                        </p>
+                        <p *ngIf="f['youtubeVideoId'].touched && f['youtubeVideoId'].errors?.['maxlength']"
+                            class="text-xs text-red-600 mt-1">
+                            Maximum 50 characters allowed
+                        </p>
+                    </div>
+
+                    <!-- Duration -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Duration (Minutes)</label>
+                        <input type="number" min="1" formControlName="durationInMinutes"
+                            [ngClass]="{'border-red-500': f['durationInMinutes'].touched && f['durationInMinutes'].invalid}"
+                            class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                        <p *ngIf="f['durationInMinutes'].touched && f['durationInMinutes'].errors?.['required']"
+                            class="text-xs text-red-600 mt-1">
+                            Duration is required
+                        </p>
+                        <p *ngIf="f['durationInMinutes'].touched && f['durationInMinutes'].errors?.['min']"
+                            class="text-xs text-red-600 mt-1">
+                            Minimum 1 minute required
+                        </p>
+                    </div>
+
+                    <!-- Session Date -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Session Date</label>
+                        <input type="date" formControlName="sessionDate"
+                            [ngClass]="{'border-red-500': f['sessionDate'].touched && f['sessionDate'].invalid}"
+                            class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                        <p *ngIf="f['sessionDate'].touched && f['sessionDate'].errors?.['required']"
+                            class="text-xs text-red-600 mt-1">
+                            Session date is required
+                        </p>
+                    </div>
+
+                    <!-- Display Order -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Display Order</label>
+                        <input type="number" min="1" formControlName="displayOrder"
+                            [ngClass]="{'border-red-500': f['displayOrder'].touched && f['displayOrder'].invalid}"
+                            class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                        <p *ngIf="f['displayOrder'].touched && f['displayOrder'].errors?.['required']"
+                            class="text-xs text-red-600 mt-1">
+                            Display order is required
+                        </p>
+                        <p *ngIf="f['displayOrder'].touched && f['displayOrder'].errors?.['min']"
+                            class="text-xs text-red-600 mt-1">
+                            Minimum value is 1
+                        </p>
+                    </div>
+
+                    <!-- Topic Description -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Topic Description</label>
+                        <textarea rows="3" formControlName="topicDescription"
+                            [ngClass]="{'border-red-500': f['topicDescription'].touched && f['topicDescription'].invalid}"
+                            class="w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                        <p *ngIf="f['topicDescription'].touched && f['topicDescription'].errors?.['maxlength']"
+                            class="text-xs text-red-600 mt-1">
+                            Maximum 500 characters allowed
+                        </p>
+                    </div>
+
                 </div>
 
-                <form [formGroup]="candidateForm" (ngSubmit)="saveCandidate()" class="p-6 space-y-4">
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                                Candidate Full Name
-                            </label>
-                            <input formControlName="fullName" type="text"
-                                class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 border"
-                                placeholder="Enter full name">
-
-                            @if (candidateForm.get('fullName')?.touched && candidateForm.get('fullName')?.invalid) {
-                            <p class="text-sm text-red-600 mt-1">Full name is required.</p>
-                            }
-                        </div>
-
-                        <div>
-                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                                Email Address
-                            </label>
-                            <input formControlName="email" type="email"
-                                class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 border"
-                                placeholder="example@email.com">
-
-                            @if (candidateForm.get('email')?.touched && candidateForm.get('email')?.invalid) {
-                            <p class="text-sm text-red-600 mt-1">
-                                @if (candidateForm.get('email')?.errors?.['required']) { Email is required. }
-                                @if (candidateForm.get('email')?.errors?.['email']) { Enter a valid email address. }
-                            </p>
-                            }
+                <!-- Footer -->
+                <div class="px-6 py-4 border-t border-slate-200 gap-3">
+                    @if (isAddEditSessionLoader()) {
+                    <div class="flex justify-center items-center">
+                        <div class="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-indigo-600">
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                                Mobile Number
-                            </label>
-                            <input formControlName="mobileNumber" type="text" maxlength="10"
-                                class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 border"
-                                placeholder="10-digit mobile number">
-
-                            @if (candidateForm.get('mobileNumber')?.touched &&
-                            candidateForm.get('mobileNumber')?.invalid) {
-                            <p class="text-sm text-red-600 mt-1">
-                                Mobile number must be 10 digits.
-                            </p>
-                            }
-                        </div>
-
-                        <div>
-                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                                Password
-                            </label>
-                            <input formControlName="password" type="password"
-                                class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 border"
-                                placeholder="Minimum 6 characters">
-
-                            @if (candidateForm.get('password')?.touched && candidateForm.get('password')?.invalid) {
-                            <p class="text-sm text-red-600 mt-1">
-                                Password must be at least 6 characters.
-                            </p>
-                            }
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                        <div>
-                            <label class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-1">
-                                Role
-                            </label>
-                            <select formControlName="role"
-                                class="w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3 border bg-white">
-                                <option value="">Select role</option>
-                                @for (role of userRoles; track role) {
-                                <option [value]="role">{{ role }}</option>
-                                }
-                            </select>
-
-                            @if (candidateForm.get('role')?.touched && candidateForm.get('role')?.invalid) {
-                            <p class="text-sm text-red-600 mt-1">Role is required.</p>
-                            }
-                        </div>
-
-                        <div class="flex items-center gap-3 pt-2">
-                            <div
-                                class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                                <input formControlName="isActive" type="checkbox" id="toggle"
-                                    class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 right-5 checked:border-indigo-600" />
-                                <label for="toggle"
-                                    class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer"></label>
-                            </div>
-                            <label for="toggle" class="text-sm font-medium text-slate-700">
-                                Set Candidate as Active
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 pt-4 border-t border-slate-100">
-                        @if (isAddEditCandidateLoader()) {
-                        <div class="flex justify-center items-center">
-                            <div
-                                class="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-indigo-600">
-                            </div>
-                        </div>
-                        } @else {
+                    } @else {
                         <div class="flex justify-end gap-3">
                             <button type="button" (click)="closeModal()"
-                                class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:cursor-pointer">
+                                class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-md hover:bg-slate-200 hover:cursor-pointer transition">
                                 Cancel
                             </button>
-
-                            <button type="submit" [disabled]="candidateForm.invalid"
-                                [ngClass]="{'bg-green-600': !candidateForm.get('candidateId')?.value ,'hover:bg-green-700': !candidateForm.get('candidateId')?.value, 'bg-yellow-500': candidateForm.get('candidateId')?.value, 'hover:bg-yellow-600': candidateForm.get('candidateId')?.value,
-                            'focus:ring-yellow-500': candidateForm.get('candidateId')?.value, 'focus:ring-green-500': candidateForm.get('candidateId')?.value}"
+        
+                            <button type="submit" [disabled]="sessionForm.invalid"
+                                [ngClass]="{'bg-green-600': !sessionForm.get('sessionId')?.value ,'hover:bg-green-700': !sessionForm.get('sessionId')?.value, 'bg-yellow-500': sessionForm.get('sessionId')?.value, 'hover:bg-yellow-600': sessionForm.get('sessionId')?.value,
+                                            'focus:ring-yellow-500': sessionForm.get('sessionId')?.value, 'focus:ring-green-500': sessionForm.get('sessionId')?.value}"
                                 class="px-4 py-2 text-sm font-medium text-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed hover:cursor-pointer">
-                                {{ candidateForm.get('candidateId')?.value ? 'Edit Batch' : 'Save Batch'}}
+                                {{ sessionForm.get('sessionId')?.value ? 'Edit Session' : 'Save Session'}}
                             </button>
                         </div>
-                        }
-                    </div>
-                </form>
+                    }
+                </div>
 
-
-            </div>
+            </form>
         </div>
     </div>
-    } -->
+
+    }
 
 </div>

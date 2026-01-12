@@ -3,14 +3,18 @@ import { SessionService } from '../../core/services/sessions/session-service';
 import { ICommonApiResponse } from '../../core/model/interfaces/common/common.model';
 import { Session } from '../../core/model/classes/session.class';
 import { APP_CONSTANT } from '../../core/constant/appConstant';
-import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DatePipe, NgClass } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DatePipe, NgClass, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AlertBox } from '../../shared/reusable-component/alert-box/alert-box';
+import { IBatch } from '../../core/model/interfaces/batch/batch-model';
+import { BatchService } from '../../core/services/batch/batch-service';
+
+const MESSAGE_TITLE = APP_CONSTANT.MESSAGE_TITLE;
 
 @Component({
   selector: 'app-sessions',
-  imports: [ReactiveFormsModule, NgClass, DatePipe, AlertBox],
+  imports: [ReactiveFormsModule, NgClass, DatePipe, AlertBox, NgIf],
   templateUrl: './sessions.html',
   styleUrl: './sessions.css',
 })
@@ -20,6 +24,10 @@ export class Sessions implements OnInit {
 
   // Form Group
   sessionForm!: FormGroup;
+
+  // signal to hold batchList
+  batchList = signal<IBatch[]>([]);
+  batchService = inject(BatchService);
 
   // View Modes (table or card)
   tableViewMode = APP_CONSTANT.VIEW_MODE.TABLE_VIEW;
@@ -65,9 +73,27 @@ export class Sessions implements OnInit {
   errorMessage = signal<string>('');
   isError = signal<boolean>(false);
 
-  constructor() { }
+  constructor() {
+    // Initialize the session form
+    this.sessionForm = new FormBuilder().group({
+      sessionId: [0],
+      batchId: ['', [Validators.required]],
+      topicName: ['', [Validators.required, Validators.maxLength(100)]],
+      topicDescription: ['', [Validators.maxLength(500)]],
+      youtubeVideoId: ['', [Validators.required, Validators.maxLength(50)]],
+      durationInMinutes: ['', [Validators.required, Validators.min(1)]],
+      sessionDate: ['', [Validators.required]],
+      displayOrder: ['', [Validators.required, Validators.min(1)]],
+    });
+  }
+
+  get f() {
+    return this.sessionForm.controls;
+  }
+
 
   ngOnInit(): void {
+    this.getBatchList();
     this.getAllSessions();
   }
 
@@ -89,16 +115,26 @@ export class Sessions implements OnInit {
     }
   }
 
+  // call batch list api
+  getBatchList() {
+    let batchListSubscriber = this.batchService.getBatches().subscribe((batches: ICommonApiResponse) => {
+      this.batchList.set(batches.data);
+    });
+    this.subscriptionList.push(batchListSubscriber);
+  }
+
   getAllSessions(): void {
-    this.sessionService.getAllSessions().subscribe({
+    this.isSessionLoading.set(true);
+    let sessionsSubscriber = this.sessionService.getAllSessions().subscribe({
       next: (response) => {
-        console.log(response);
+        this.isSessionLoading.set(false);
         this.sessions.set(response.data);
       },
       error: (error) => {
         console.error('Error fetching sessions:', error);
       }
     });
+    this.subscriptionList.push(sessionsSubscriber);
   }
 
   // --- Actions ---
@@ -126,24 +162,125 @@ export class Sessions implements OnInit {
     this.sessionForm.reset({ isActive: true }); // Reset form
   }
 
+  // Handle success after Add/Edit api got success
+  onAddEditSuccess(res: ICommonApiResponse) {
+    this.isAddEditSessionLoader.set(false);
+
+    if (this.sessionForm.value.sessionId && this.sessionForm.value.sessionId > 0) {
+      this.errorTitle.set(MESSAGE_TITLE.SESSION.EDIT);
+    } else {
+      this.errorTitle.set(MESSAGE_TITLE.SESSION.ADD);
+    }
+    this.createAlertData(res);
+    this.closeModal();
+    this.getAllSessions();
+  }
+
+  // Handle error after Add/Edit api got failed
+  onAddEditError(error: ICommonApiResponse) {
+    if (this.sessionForm.value.sessionId && this.sessionForm.value.sessionId > 0) {
+      this.errorTitle.set(MESSAGE_TITLE.SESSION.EDIT);
+    } else {
+      this.errorTitle.set(MESSAGE_TITLE.SESSION.ADD);
+    }
+    this.createAlertData(error);
+    this.isAddEditSessionLoader.set(false);
+  }
+
+  // call edit session api
+  callEditApi(sessionData: Session) {
+    let editSessionSubscriber = this.sessionService.updateSession(sessionData.sessionId, sessionData).subscribe({
+      next: (res: ICommonApiResponse) => {
+        this.onAddEditSuccess(res);
+      },
+      error: (error: ICommonApiResponse) => {
+        this.onAddEditError(error);
+      }
+    });
+    this.subscriptionList.push(editSessionSubscriber);
+  }
+
+  // call add session api
+  callAddApi(sessionData: Session) {
+     let addSessionSubscriber = this.sessionService.createSession(sessionData).subscribe({
+      next: (res: ICommonApiResponse) => {
+        this.onAddEditSuccess(res);
+      },
+      error: (error: ICommonApiResponse) => {
+        this.onAddEditError(error);
+      }
+    });
+    this.subscriptionList.push(addSessionSubscriber);
+  }
+
+  // call method when click on Save/Edit button while adding/editing session
+  onSubmit() {
+    if (this.sessionForm.invalid) {
+      this.sessionForm.markAllAsTouched();
+      return;
+    }
+    this.isAddEditSessionLoader.set(true);
+    const sessionData: Session = this.sessionForm.value;
+
+    if (!sessionData.sessionId) {
+      sessionData.sessionId = 0;
+    }
+    sessionData.batchId = Number(sessionData.batchId);
+    sessionData.sessionDate = new Date(sessionData.sessionDate).toISOString().substring(0, 10);
+    sessionData.createdAt = new Date().toISOString().substring(0, 10);
+    sessionData.updatedAt = new Date().toISOString().substring(0, 10);
+
+    if (sessionData.sessionId && sessionData.sessionId > 0) {
+      // Edit session
+      console.log('Edit session:', sessionData);
+      this.callEditApi(sessionData);
+    } else {
+      // Create new session
+      console.log('Create session:', sessionData);
+      this.callAddApi(sessionData);
+    }
+  }
+
+  // edit session and populate form
   editSession(session: Session) {
     // Populate form with session data
+    let batchId = this.batchList().find(b => b.batchName === session.batchName)?.batchId || null;
+
     this.sessionForm.patchValue({
       sessionId: session.sessionId,
-      batchId: session.batchId,
+      batchId: batchId,
       topicName: session.topicName,
       topicDescription: session.topicDescription,
       youtubeVideoId: session.youtubeVideoId,
       durationInMinutes: session.durationInMinutes,
-      sessionDate: session.sessionDate,
+      sessionDate: new Date(session.sessionDate).toISOString().substring(0, 10),
       displayOrder: session.displayOrder
     });
     this.openModal();
   }
 
+  // delete session using id and show alert
   deleteSession(session: Session) {
     // Implement delete logic here
     console.log('Delete session:', session);
+    let sessionId = session.sessionId;
+
+    // Set loader
+    session.isDeleteLoader = true;
+    let deleteSessionSubscriber = this.sessionService.deleteSession(sessionId).subscribe({
+      next: (res: ICommonApiResponse) => {
+        session.isDeleteLoader = false;
+        this.errorTitle.set(MESSAGE_TITLE.SESSION.DELETE);
+        this.createAlertData(res);
+        this.sessions.update(values => values.filter(s => s.sessionId !== sessionId));
+      },
+      error: (error: ICommonApiResponse) => {
+        session.isDeleteLoader = false;
+        this.errorTitle.set(MESSAGE_TITLE.SESSION.DELETE);
+        this.createAlertData(error);
+      }
+    });
+    this.subscriptionList.push(deleteSessionSubscriber);
   }
 
   /**

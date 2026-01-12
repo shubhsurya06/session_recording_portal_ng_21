@@ -26,6 +26,11 @@ export const APP_CONSTANT = {
             ADD: 'Enrollment Add',
             EDIT: 'Enrollment Edit',
             DELETE: 'Enrollment Delete'
+        },
+        SESSION: {
+            ADD: 'Session Add',
+            EDIT: 'Session Edit',
+            DELETE: 'Session Delete'
         }
     }
 }

@@ -11,7 +11,7 @@ export const API_CONSTANT = {
         GET_ENROLLMENTS: '/GetAllEnrollment'
     },
     SESSION_APIS: {
-        GET_SESSIONS: '/GetAllSessionsRecordings',
+        GET_SESSIONS: '/GetAllSessionsRecordings'
     },
     BATCH_USER_APIS: {
         LOGIN: '/login',
