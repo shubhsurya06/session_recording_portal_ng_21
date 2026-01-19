@@ -4,6 +4,7 @@ import { APP_CONSTANT } from '../../constant/appConstant';
 import { API_CONSTANT } from '../../constant/apiConstant';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
+import { delay } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -16,8 +17,10 @@ export class AuthService {
 
   // login user from here
   login(data: IUser) {
-    const url = this.baseUrl + API_CONSTANT.CONTROLLER_TYPES.BATCH_USER + API_CONSTANT.BATCH_USER_APIS.LOGIN;
-    return this.http.post(url, data);
+    const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCH_USER}${API_CONSTANT.BATCH_USER_APIS.LOGIN}`;
+    return this.http.post(url, data).pipe(
+      delay(500)
+    );
   }
 
   // check if user is logged in

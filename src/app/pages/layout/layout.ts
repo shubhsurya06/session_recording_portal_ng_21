@@ -4,6 +4,7 @@ import { Router, RouterLinkActive, RouterLink, RouterOutlet } from '@angular/rou
 import { UserService } from '../../core/services/user/user-service';
 import { IUser } from '../../core/model/interfaces/user/user-model';
 import { NgClass } from '@angular/common';
+import { ROLES } from '../../core/roles';
 
 @Component({
   selector: 'app-layout',
@@ -21,6 +22,9 @@ export class Layout {
 
   // user data from user service
   userData: IUser | null = null;
+
+  // roles constant
+  ROLES = ROLES;
 
   // sidebar collapsed state
   isSidebarCollapsed = signal(false);
