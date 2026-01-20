@@ -51,4 +51,11 @@ export class EnrollmentsService {
       })
     );  
   }
+
+  getEnrollmentByCandidateId(candidateId: number) : Observable<ICommonApiResponse>{
+    const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCH_ENROLLMENTS}${API_CONSTANT.BATCH_ENROLLMENTS_API.BY_CANDIDATE_ID}/${candidateId}`;
+    return this.http.get<ICommonApiResponse>(url).pipe(
+      delay(500)
+    );
+  }
 }

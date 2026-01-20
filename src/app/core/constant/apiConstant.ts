@@ -8,7 +8,8 @@ export const API_CONSTANT = {
         CANDIDATES: 'Candidates'
     },
     BATCH_ENROLLMENTS_API: {
-        GET_ENROLLMENTS: '/GetAllEnrollment'
+        GET_ENROLLMENTS: '/GetAllEnrollment',
+        BY_CANDIDATE_ID: '/by-candidate'
     },
     SESSION_APIS: {
         GET_SESSIONS: '/GetAllSessionsRecordings'
