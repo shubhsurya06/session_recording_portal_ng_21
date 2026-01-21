@@ -11,12 +11,13 @@ import { IBatch } from '../../core/model/interfaces/batch/batch-model';
 import { C_Candidate } from '../../core/model/classes/candidate.class';
 import { BatchService } from '../../core/services/batch/batch-service';
 import { CandidateService } from '../../core/services/candidate/candidate-service';
+import { GetLoader } from '../../shared/reusable-component/get-loader/get-loader';
 
 const MESSAGE_TITLE = APP_CONSTANT.MESSAGE_TITLE;
 
 @Component({
   selector: 'app-enrollments',
-  imports: [ReactiveFormsModule, NgClass, AlertBox, NgIf, NgFor, DatePipe],
+  imports: [ReactiveFormsModule, NgClass, AlertBox, NgIf, NgFor, DatePipe, GetLoader],
   templateUrl: './enrollments.html',
   styleUrl: './enrollments.css',
 })

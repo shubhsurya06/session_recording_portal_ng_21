@@ -8,12 +8,13 @@ import { ICommonApiResponse } from '../../core/model/interfaces/common/common.mo
 import { APP_CONSTANT } from '../../core/constant/appConstant';
 import { AlertBox } from '../../shared/reusable-component/alert-box/alert-box';
 import { NgClass } from '@angular/common';
+import { GetLoader } from '../../shared/reusable-component/get-loader/get-loader';
 
 const MESSAGE_TITLE = APP_CONSTANT.MESSAGE_TITLE;
 
 @Component({
   selector: 'app-candidates',
-  imports: [ReactiveFormsModule, AlertBox, NgClass],
+  imports: [ReactiveFormsModule, AlertBox, NgClass, GetLoader],
   templateUrl: './candidates.html',
   styleUrl: './candidates.css',
 })

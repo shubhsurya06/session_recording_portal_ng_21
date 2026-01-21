@@ -3,17 +3,18 @@ import { Component, inject, signal, OnInit, computed, OnDestroy, ViewChild, Elem
 import { BatchService } from '../../core/services/batch/batch-service';
 import { IBatch } from '../../core/model/interfaces/batch/batch-model';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { APP_CONSTANT } from '../../core/constant/appConstant';
 import { ICommonApiResponse } from '../../core/model/interfaces/common/common.model';
 import { Subscription } from 'rxjs';
 import { AlertBox } from '../../shared/reusable-component/alert-box/alert-box';
+import { GetLoader } from '../../shared/reusable-component/get-loader/get-loader';
 
 const MESSAGE_TITLE = APP_CONSTANT.MESSAGE_TITLE;
 
 @Component({
   selector: 'app-batch-master',
-  imports: [ReactiveFormsModule, NgClass, AlertBox],
+  imports: [ReactiveFormsModule, NgClass, AlertBox, GetLoader],
   templateUrl: './batch-master.html',
   styleUrl: './batch-master.css',
 })

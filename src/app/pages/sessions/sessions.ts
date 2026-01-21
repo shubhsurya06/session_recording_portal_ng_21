@@ -9,12 +9,13 @@ import { Subscription } from 'rxjs';
 import { AlertBox } from '../../shared/reusable-component/alert-box/alert-box';
 import { IBatch } from '../../core/model/interfaces/batch/batch-model';
 import { BatchService } from '../../core/services/batch/batch-service';
+import { GetLoader } from '../../shared/reusable-component/get-loader/get-loader';
 
 const MESSAGE_TITLE = APP_CONSTANT.MESSAGE_TITLE;
 
 @Component({
   selector: 'app-sessions',
-  imports: [ReactiveFormsModule, NgClass, DatePipe, AlertBox, NgIf],
+  imports: [ReactiveFormsModule, NgClass, DatePipe, AlertBox, NgIf, GetLoader],
   templateUrl: './sessions.html',
   styleUrl: './sessions.css',
 })
