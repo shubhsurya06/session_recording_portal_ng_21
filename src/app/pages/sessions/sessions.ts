@@ -4,24 +4,36 @@ import { ICommonApiResponse } from '../../core/model/interfaces/common/common.mo
 import { Session } from '../../core/model/classes/session.class';
 import { APP_CONSTANT } from '../../core/constant/appConstant';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DatePipe, NgClass, NgIf } from '@angular/common';
+import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AlertBox } from '../../shared/reusable-component/alert-box/alert-box';
 import { IBatch } from '../../core/model/interfaces/batch/batch-model';
 import { BatchService } from '../../core/services/batch/batch-service';
 import { GetLoader } from '../../shared/reusable-component/get-loader/get-loader';
+import { UserService } from '../../core/services/user/user-service';
+import { EnrollmentsService } from '../../core/services/enrollments/enrollments-service';
+import { EnrollmentClass } from '../../core/model/classes/enrollments.class';
+import { ROLES } from '../../core/roles';
 
 const MESSAGE_TITLE = APP_CONSTANT.MESSAGE_TITLE;
 
 @Component({
   selector: 'app-sessions',
-  imports: [ReactiveFormsModule, NgClass, DatePipe, AlertBox, NgIf, GetLoader],
+  imports: [ReactiveFormsModule, NgClass, DatePipe, AlertBox, NgIf, NgFor, GetLoader],
   templateUrl: './sessions.html',
   styleUrl: './sessions.css',
 })
 export class Sessions implements OnInit {
 
   sessionService = inject(SessionService);
+  userService = inject(UserService);
+  enrollmentService = inject(EnrollmentsService);
+
+  roles = ROLES;
+
+  // enrollment related data
+  enrollmentLoader = signal<boolean>(false);
+  userEnrollmentData = signal<EnrollmentClass[]>([]);
 
   // Form Group
   sessionForm!: FormGroup;
@@ -36,6 +48,9 @@ export class Sessions implements OnInit {
 
   // signal to hold sessions list
   sessions = signal<Session[]>([]);
+
+  // sessions batchWise
+  sessionsBatchWise = signal<Session[]>([]);
 
   // current selected VIEW MODE (Table/Card)
   viewMode = signal<string>(this.tableViewMode); // Default to Table
@@ -74,6 +89,46 @@ export class Sessions implements OnInit {
   errorMessage = signal<string>('');
   isError = signal<boolean>(false);
 
+  // 1. Raw Data from API
+  // enrollments = signal<EnrollmentClass[]>([
+  //   { enrollmentId: 101, enrollmentDate: "2026-01-20T10:00:00", isActive: true, fullName: "Ruchi", mobileNumber: "9000998811", batchName: "React & Vue.js", batchId: 202 },
+  //   { enrollmentId: 102, enrollmentDate: "2026-01-21T14:00:00", isActive: true, fullName: "Aarav Singh", mobileNumber: "9876543210", batchName: "Angular Masterclass", batchId: 203 },
+  //   { enrollmentId: 103, enrollmentDate: "2026-01-22T09:30:00", isActive: false, fullName: "Neha Gupta", mobileNumber: "9123456789", batchName: "React & Vue.js", batchId: 202 },
+  //   { enrollmentId: 104, enrollmentDate: "2026-01-23T11:00:00", isActive: true, fullName: "Vikram Malhotra", mobileNumber: "8899776655", batchName: "Python Data Science", batchId: 204 },
+  //   { enrollmentId: 105, enrollmentDate: "2026-01-24T16:00:00", isActive: true, fullName: "Sohan Roy", mobileNumber: "7766554433", batchName: "React & Vue.js", batchId: 202 },
+  //   { enrollmentId: 106, enrollmentDate: "2026-01-25T10:00:00", isActive: true, fullName: "Priya Das", mobileNumber: "9988001122", batchName: "Angular Masterclass", batchId: 203 },
+  // ]);
+
+  // 2. State: Which Batch Tab is selected?
+  // Defaulting to the first batchId found, or 0 if empty
+  selectedBatchId = signal<number | undefined>(202);
+
+  // 3. Computed: Extract Unique Batches for the Tabs Navigation
+  // uniqueBatches = computed(() => {
+  //   const map = new Map();
+  //   this.enrollments().forEach(item => {
+  //     if (!map.has(item.batchId)) {
+  //       map.set(item.batchId, { 
+  //           id: item.batchId, 
+  //           name: item.batchName,
+  //           count: 0 
+  //       });
+  //     }
+  //     map.get(item.batchId).count++;
+  //   });
+  //   return Array.from(map.values());
+  // });
+
+  // 4. Computed: Filter the Cards based on the selected Tab
+  currentBatchSessions = computed(() => {
+    return this.userEnrollmentData().filter(e => e.batchId === this.selectedBatchId());
+  });
+
+  // Action: Switch Tab
+  selectTab(batchId: number | undefined) {
+    this.selectedBatchId.set(batchId);
+  }
+
   constructor() {
     // Initialize the session form
     this.sessionForm = new FormBuilder().group({
@@ -95,7 +150,8 @@ export class Sessions implements OnInit {
 
   ngOnInit(): void {
     this.getBatchList();
-    this.getAllSessions();
+    this.getEnrollmentByCandidateId();
+    // this.getAllSessions();
   }
 
   ngOnDestroy(): void {
@@ -116,6 +172,24 @@ export class Sessions implements OnInit {
     }
   }
 
+  getEnrollmentByCandidateId() {
+    this.enrollmentLoader.set(true);
+    const candidateId = this.userService.userData?.candidateId;
+    if (candidateId) {
+      this.enrollmentService.getEnrollmentByCandidateId(candidateId).subscribe({
+        next: (response: ICommonApiResponse) => {
+          this.enrollmentLoader.set(false);
+          this.userEnrollmentData.set(response.data);
+          console.log('User enrollment data:', this.userEnrollmentData());
+        },
+        error: (error) => {
+          this.enrollmentLoader.set(false);
+          console.error('Error fetching enrollment by candidate ID:', error);
+        }
+      });
+    }
+  }
+
   // call batch list api
   getBatchList() {
     let batchListSubscriber = this.batchService.getBatches().subscribe((batches: ICommonApiResponse) => {
@@ -130,6 +204,20 @@ export class Sessions implements OnInit {
       next: (response) => {
         this.isSessionLoading.set(false);
         this.sessions.set(response.data);
+      },
+      error: (error) => {
+        console.error('Error fetching sessions:', error);
+      }
+    });
+    this.subscriptionList.push(sessionsSubscriber);
+  }
+
+  getSessionRecording(batchId: number | undefined): void {
+    this.isSessionLoading.set(true);
+    let sessionsSubscriber = this.sessionService.getSessionsByBatchId(batchId).subscribe({
+      next: (response) => {
+        this.isSessionLoading.set(false);
+        this.sessionsBatchWise.set(response.data);
       },
       error: (error) => {
         console.error('Error fetching sessions:', error);
@@ -203,7 +291,7 @@ export class Sessions implements OnInit {
 
   // call add session api
   callAddApi(sessionData: Session) {
-     let addSessionSubscriber = this.sessionService.createSession(sessionData).subscribe({
+    let addSessionSubscriber = this.sessionService.createSession(sessionData).subscribe({
       next: (res: ICommonApiResponse) => {
         this.onAddEditSuccess(res);
       },

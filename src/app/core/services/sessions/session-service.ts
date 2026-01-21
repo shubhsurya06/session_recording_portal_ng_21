@@ -11,14 +11,22 @@ import { API_CONSTANT } from '../../constant/apiConstant';
   providedIn: 'root',
 })
 export class SessionService {
-  
+
   baseUrl: string = environment.API_URL;
 
   http = inject(HttpClient);
 
   // Method to get all sessions
-  getAllSessions() : Observable<ICommonApiResponse>{
+  getAllSessions(): Observable<ICommonApiResponse> {
     const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCH_SESSIONS}${API_CONSTANT.SESSION_APIS.GET_SESSIONS}`;
+    return this.http.get<ICommonApiResponse>(url).pipe(
+      delay(500)
+    );
+  }
+
+  // Method to get sessions by batch ID
+  getSessionsByBatchId(batchId: number| undefined): Observable<ICommonApiResponse> {
+    const url = `${this.baseUrl}${API_CONSTANT.CONTROLLER_TYPES.BATCH_SESSIONS}${API_CONSTANT.SESSION_APIS.BY_BATCH_ID}/${batchId}`;
     return this.http.get<ICommonApiResponse>(url).pipe(
       delay(500)
     );

@@ -12,7 +12,8 @@ export const API_CONSTANT = {
         BY_CANDIDATE_ID: '/by-candidate'
     },
     SESSION_APIS: {
-        GET_SESSIONS: '/GetAllSessionsRecordings'
+        GET_SESSIONS: '/GetAllSessionsRecordings',
+        BY_BATCH_ID: '/by-batch'
     },
     BATCH_USER_APIS: {
         LOGIN: '/login',
